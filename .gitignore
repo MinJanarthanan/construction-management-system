@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds
+dist/
+build/
+frontend/dist/
+
+# Environment and credentials
+.env
+.env.local
+*.env
+
+# Database runtime files & logs
+*.sqlite
+*.sqlite3
+*.db
+backend/database.sqlite
+*.log
+npm-debug.log*
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Alumni scratch assets
+alumni_ms/
+standalone_alumni_app.html
+index.html

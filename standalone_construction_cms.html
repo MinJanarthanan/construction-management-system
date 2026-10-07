@@ -713,28 +713,8 @@
             </div>
         </div>
 
-        <ul class="nav-list">
-            <li class="nav-item active" onclick="switchTab('dashboard', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('projects', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-building"></i> Projects (8)</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('forms', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-clipboard-check"></i> Site Forms (10k)</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('finance', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-indian-rupee-sign"></i> Finance & Budgets</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('materials', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-boxes-stacked"></i> Materials & Inventory</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('contractors', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-users-gear"></i> Contractors</a>
-            </li>
-            <li class="nav-item" onclick="switchTab('reports', this)">
-                <a href="javascript:void(0)"><i class="fa-solid fa-file-invoice-dollar"></i> Reports & Export</a>
-            </li>
+        <ul class="nav-list" id="sidebarNavList">
+            <!-- Dynamically populated per user role (Matches Localhost Sidebar.jsx) -->
         </ul>
 
         <div class="sidebar-footer">
@@ -962,6 +942,192 @@
                 <!-- Projects Grid -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;" id="projectsContainer">
                     <!-- Populated dynamically via JavaScript -->
+                </div>
+            </section>
+
+            <!-- TASKS VIEW (Matches Localhost Tasks.jsx) -->
+            <section id="view-tasks" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Site Tasks & Milestones</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Field execution milestones, sub-contractor deliverables, and due date compliance</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewTaskModal()"><i class="fa-solid fa-plus"></i> Add New Task</button>
+                </div>
+
+                <!-- 4 Task Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Tasks</span>
+                        <h2 style="font-size: 1.65rem; font-weight: 800; margin: 0.2rem 0;" id="taskTotalCount">7</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Across all active job sites</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Completed</span>
+                        <h2 style="font-size: 1.65rem; font-weight: 800; margin: 0.2rem 0; color: var(--success);" id="taskCompletedCount">2</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Verified by Site Engineer</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">In-Progress</span>
+                        <h2 style="font-size: 1.65rem; font-weight: 800; margin: 0.2rem 0; color: var(--info);" id="taskInProgressCount">2</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Active field execution</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Pending / Open</span>
+                        <h2 style="font-size: 1.65rem; font-weight: 800; margin: 0.2rem 0; color: var(--warning);" id="taskOpenCount">3</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Awaiting site mobilization</p>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="glass-card" style="padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks by name or assignee..." style="flex: 1; min-width: 200px;" oninput="filterTasks()">
+                    <select id="taskStatusFilter" class="form-select" style="width: 180px;" onchange="filterTasks()">
+                        <option value="">All Statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="In-Progress">In-Progress</option>
+                        <option value="Review">Review</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <!-- Tasks Table -->
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Task Description</th>
+                                    <th>Project</th>
+                                    <th>Assigned To</th>
+                                    <th>Start Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasksTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RESOURCES & LABOR VIEW (Matches Localhost Resources.jsx) -->
+            <section id="view-resources" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Resources & Labor Management</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Heavy machinery deployment, specialized tools, fleet trucks, and site labor crews</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewResourceModal()"><i class="fa-solid fa-plus"></i> Allocate Resource</button>
+                </div>
+
+                <!-- 3 Resource Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Heavy Equipment & Machinery</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--accent-secondary);">10 Units</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Cranes, Excavators & Concrete Mixers</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Field Labor Deployed</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--success);">38 Personnel</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Bar benders & scaffolding crews</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Resource Availability</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--info);">96.8%</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Optimal fleet uptime rate</p>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="glass-card" style="padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="resourceSearch" class="form-control" placeholder="Search resources or machinery..." style="flex: 1; min-width: 200px;" oninput="filterResources()">
+                    <select id="resourceTypeFilter" class="form-select" style="width: 220px;" onchange="filterResources()">
+                        <option value="">All Categories</option>
+                        <option value="Heavy Equipment">Heavy Equipment</option>
+                        <option value="Heavy Machinery">Heavy Machinery</option>
+                        <option value="Skilled Labor">Skilled Labor</option>
+                        <option value="Fleet Vehicle">Fleet Vehicle</option>
+                        <option value="Sub-Contract Crew">Sub-Contract Crew</option>
+                    </select>
+                </div>
+
+                <!-- Resources Table -->
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Resource Name</th>
+                                    <th>Project Allocation</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Field Remarks</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resourcesTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- USER GOVERNANCE VIEW (Matches Localhost Users.jsx - Admin Only) -->
+            <section id="view-users" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">User Governance & Security RBAC</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Manage employee access credentials, role authorizations, and platform governance</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewUserModal()"><i class="fa-solid fa-user-plus"></i> Create User</button>
+                </div>
+
+                <!-- User Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total System Accounts</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0;">5 Personas</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">100% RBAC verified</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Active Sessions</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--success);">5 Active</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Zero security suspensions</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Bcrypt Password Hashing</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--info);">Cost Factor 10</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">SHA-256 JWT Signed</p>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Official Email</th>
+                                    <th>Assigned Role</th>
+                                    <th>Status</th>
+                                    <th>Role Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -1376,6 +1542,172 @@
         </div>
     </div>
 
+    <!-- MODAL 4: ADD TASK MODAL -->
+    <div id="newTaskModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Create New Site Task</h3>
+                <button class="close-btn" onclick="closeModal('newTaskModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newTaskForm" onsubmit="handleCreateTask(event)">
+                    <div class="form-group">
+                        <label class="form-label">Task Description *</label>
+                        <input type="text" id="tName" class="form-control" required placeholder="e.g. Scaffolding Inspection Level 3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project *</label>
+                        <select id="tProject" class="form-select" required>
+                            <option value="Apex Commercial Tower">Apex Commercial Tower</option>
+                            <option value="Metro Flyover Extn">Metro Flyover Extn</option>
+                            <option value="Greenfield Tech Park">Greenfield Tech Park</option>
+                            <option value="Harbor Container Terminal">Harbor Container Terminal</option>
+                            <option value="Horizon Residential Complex">Horizon Residential Complex</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Assigned Site Officer</label>
+                            <select id="tAssigned" class="form-select">
+                                <option value="Rajesh Patel">Rajesh Patel (Site Engineer)</option>
+                                <option value="Marcus Brody">Marcus Brody (Site Supervisor)</option>
+                                <option value="Sarah Jenkins">Sarah Jenkins (Project Manager)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Task Status</label>
+                            <select id="tStatus" class="form-select">
+                                <option value="Open">Open</option>
+                                <option value="In-Progress">In-Progress</option>
+                                <option value="Review">Review</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Start Date *</label>
+                            <input type="date" id="tStart" class="form-control" required value="2026-10-08">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Due Date *</label>
+                            <input type="date" id="tDue" class="form-control" required value="2026-10-25">
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newTaskModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: ALLOCATE RESOURCE MODAL -->
+    <div id="newResourceModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Allocate Site Resource / Labor</h3>
+                <button class="close-btn" onclick="closeModal('newResourceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newResourceForm" onsubmit="handleCreateResource(event)">
+                    <div class="form-group">
+                        <label class="form-label">Resource / Equipment Name *</label>
+                        <input type="text" id="rName" class="form-control" required placeholder="e.g. Mobile Crane 50T or Formwork Team">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Project Allocation *</label>
+                            <select id="rProject" class="form-select" required>
+                                <option value="Apex Commercial Tower">Apex Commercial Tower</option>
+                                <option value="Metro Flyover Extn">Metro Flyover Extn</option>
+                                <option value="Greenfield Tech Park">Greenfield Tech Park</option>
+                                <option value="Harbor Container Terminal">Harbor Container Terminal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="rType" class="form-select">
+                                <option value="Heavy Equipment">Heavy Equipment</option>
+                                <option value="Heavy Machinery">Heavy Machinery</option>
+                                <option value="Skilled Labor">Skilled Labor</option>
+                                <option value="Fleet Vehicle">Fleet Vehicle</option>
+                                <option value="Sub-Contract Crew">Sub-Contract Crew</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" id="rQty" class="form-control" required value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit *</label>
+                            <input type="text" id="rUnit" class="form-control" required value="Units" placeholder="Units, Workers, Trucks">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deployment Remarks</label>
+                        <input type="text" id="rRemarks" class="form-control" placeholder="e.g. Allocated for Foundation Decking">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newResourceModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Allocate Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: CREATE USER MODAL (Admin Only) -->
+    <div id="newUserModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Create Platform User (RBAC)</h3>
+                <button class="close-btn" onclick="closeModal('newUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newUserForm" onsubmit="handleCreateUser(event)">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="uFullName" class="form-control" required placeholder="e.g. Arun Kumar">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <input type="text" id="uUsername" class="form-control" required placeholder="e.g. arun.kumar">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" id="uEmail" class="form-control" required placeholder="arun@buildcorp.com">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Security Role *</label>
+                            <select id="uRole" class="form-select">
+                                <option value="Site Engineer">Site Engineer</option>
+                                <option value="Project Manager">Project Manager</option>
+                                <option value="Accountant">Accountant</option>
+                                <option value="Site Supervisor">Site Supervisor</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Temporary Password *</label>
+                            <input type="password" id="uPassword" class="form-control" required value="Demo@123">
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newUserModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Application Script -->
     <script>
         // State Store
@@ -1416,6 +1748,33 @@
             { id: "FRM-10248", project: "1328: Apex Tower", title: "Scaffolding Erection Safety Tagging", group: "Safety", date: "2026-09-30", status: "Open", actions: 3 }
         ];
 
+        let tasksData = [
+            { id: 1, name: "Foundation Excavation & Soil Piling", project: "Apex Commercial Tower", assigned: "Rajesh Patel", start: "2026-09-15", due: "2026-10-20", status: "In-Progress" },
+            { id: 2, name: "Scaffolding Erection Level 4", project: "Metro Flyover Extn", assigned: "Marcus Brody", start: "2026-09-25", due: "2026-10-15", status: "Open" },
+            { id: 3, name: "HVAC Conduit Inspection QA", project: "Greenfield Tech Park", assigned: "Rajesh Patel", start: "2026-09-20", due: "2026-10-08", status: "Completed" },
+            { id: 4, name: "Structural Steel Beam Installation", project: "Harbor Container Terminal", assigned: "Marcus Brody", start: "2026-10-01", due: "2026-10-28", status: "In-Progress" },
+            { id: 5, name: "Concrete Curing QC Batch #4", project: "Horizon Residential Complex", assigned: "Rajesh Patel", start: "2026-10-02", due: "2026-10-18", status: "Review" },
+            { id: 6, name: "Transformer Yard Earthing Audit", project: "Solar Power Substation", assigned: "Marcus Brody", start: "2026-09-28", due: "2026-10-12", status: "Completed" },
+            { id: 7, name: "Flyover Span 4 Girder Pre-stressing", project: "Metro Flyover Extn", assigned: "Rajesh Patel", start: "2026-10-05", due: "2026-10-22", status: "Open" }
+        ];
+
+        let resourcesData = [
+            { id: 1, name: "Hydraulic Excavator CAT 320", project: "Apex Commercial Tower", type: "Heavy Equipment", qty: 2, unit: "Units", status: "Active", remarks: "Excavation Zone B" },
+            { id: 2, name: "Tower Crane Potain MC 85", project: "Greenfield Tech Park", type: "Heavy Machinery", qty: 1, unit: "Units", status: "Active", remarks: "Tower 1 Core" },
+            { id: 3, name: "RCC Bar Bending Labor Crew", project: "Metro Flyover Extn", type: "Skilled Labor", qty: 24, unit: "Workers", status: "Active", remarks: "Span 4 Piers" },
+            { id: 4, name: "Transit Concrete Mixers 8m³", project: "Harbor Container Terminal", type: "Fleet Vehicle", qty: 5, unit: "Trucks", status: "Active", remarks: "Batching Plant Fleet" },
+            { id: 5, name: "Scaffolding Assembly Team", project: "Horizon Residential Complex", type: "Sub-Contract Crew", qty: 14, unit: "Workers", status: "Active", remarks: "Façade Rigging" },
+            { id: 6, name: "Mobile Diesel Generator 250 kVA", project: "Solar Power Substation", type: "Heavy Equipment", qty: 2, unit: "Generators", status: "Standby", remarks: "Substation Testing" }
+        ];
+
+        let usersData = [
+            { id: 1, name: "Alex Vance", username: "alex.vance", email: "alex.vance@buildcorp.com", role: "Admin", status: "Active", desc: "System Admin & Governance" },
+            { id: 2, name: "Sarah Jenkins", username: "sarah.jenkins", email: "sarah.jenkins@buildcorp.com", role: "Project Manager", status: "Active", desc: "Multi-Project Delivery" },
+            { id: 3, name: "Rajesh Patel", username: "rajesh.patel", email: "rajesh.patel@buildcorp.com", role: "Site Engineer", status: "Active", desc: "Site Operations & QA" },
+            { id: 4, name: "Elena Rostova", username: "elena.rostova", email: "elena.rostova@buildcorp.com", role: "Accountant", status: "Active", desc: "Budgets & Cost Audits" },
+            { id: 5, name: "Marcus Brody", username: "marcus.brody", email: "marcus.brody@buildcorp.com", role: "Site Supervisor", status: "Active", desc: "Field Tasks & Materials" }
+        ];
+
         // Format Currency Helper
         function formatINR(val) {
             return '₹' + (Number(val) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1444,8 +1803,33 @@
             modal.scrollTop = 0;
         }
 
+        function openNewTaskModal() {
+            const modal = document.getElementById('newTaskModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewResourceModal() {
+            const modal = document.getElementById('newResourceModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewUserModal() {
+            const modal = document.getElementById('newUserModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
         }
 
         function closeModals(e) {
@@ -1454,22 +1838,88 @@
             }
         }
 
-        // Tab Navigation
+        // ================= DYNAMIC ROLE-BASED SIDEBAR NAVIGATION (Matches Localhost Sidebar.jsx) =================
+        let currentTab = 'dashboard';
+
+        function getNavItemsForRole(role) {
+            const isAdmin = role === 'Admin';
+            const isAccountant = role === 'Accountant';
+            const isSiteSupervisor = role === 'Site Supervisor';
+
+            return [
+                { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie' },
+                { id: 'projects', label: 'Projects (8)', icon: 'fa-building' },
+                ...(!isAccountant ? [
+                    { id: 'tasks', label: 'Tasks', icon: 'fa-square-check' },
+                    { id: 'materials', label: 'Materials & Stock', icon: 'fa-boxes-stacked' },
+                    { id: 'resources', label: 'Resources & Labor', icon: 'fa-wrench' }
+                ] : []),
+                ...(isAdmin || isAccountant || !isSiteSupervisor ? [
+                    { id: 'finance', label: 'Finance & Budgets', icon: 'fa-indian-rupee-sign' },
+                    { id: 'contractors', label: 'Contractors', icon: 'fa-users-gear' }
+                ] : []),
+                ...(isAdmin ? [
+                    { id: 'users', label: 'User Governance', icon: 'fa-user-shield' }
+                ] : []),
+                { id: 'forms', label: 'Site Forms (10k)', icon: 'fa-clipboard-check' },
+                { id: 'reports', label: 'Reports & Export', icon: 'fa-file-invoice-dollar' }
+            ];
+        }
+
+        function renderSidebarNav(activeTabId = currentTab) {
+            const navList = document.getElementById('sidebarNavList');
+            if (!navList) return;
+            const role = currentUser ? currentUser.role : 'Admin';
+            const items = getNavItemsForRole(role);
+
+            // If current tab is restricted for this persona, redirect to dashboard
+            const exists = items.some(item => item.id === activeTabId);
+            if (!exists) {
+                activeTabId = 'dashboard';
+            }
+            currentTab = activeTabId;
+
+            navList.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = `nav-item ${item.id === activeTabId ? 'active' : ''}`;
+                li.onclick = () => switchTab(item.id, li);
+                li.innerHTML = `
+                    <a href="javascript:void(0)">
+                        <i class="fa-solid ${item.icon}"></i> ${item.label}
+                    </a>
+                `;
+                navList.appendChild(li);
+            });
+
+            // Activate content section
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('view-' + activeTabId);
+            if (target) target.classList.add('active');
+        }
+
         function switchTab(viewName, element) {
+            currentTab = viewName;
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
             const target = document.getElementById('view-' + viewName);
             if (target) target.classList.add('active');
-            if (element) element.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            } else {
+                const navLinks = document.querySelectorAll('#sidebarNavList .nav-item');
+                navLinks.forEach(item => {
+                    if (item.innerText.toLowerCase().includes(viewName.toLowerCase())) {
+                        item.classList.add('active');
+                    }
+                });
+            }
         }
 
         function switchTabByName(viewName) {
-            const items = document.querySelectorAll('.nav-item');
-            const map = { dashboard: 0, projects: 1, forms: 2, finance: 3, materials: 4, contractors: 5, reports: 6 };
-            if (map[viewName] !== undefined) {
-                switchTab(viewName, items[map[viewName]]);
-            }
+            switchTab(viewName);
+            renderSidebarNav(viewName);
         }
 
         // Render Projects Grid
@@ -1706,6 +2156,188 @@
             a.click();
         }
 
+        // ================= TASKS, RESOURCES & USER GOVERNANCE LOGIC =================
+        function renderTasks(items = tasksData) {
+            const tbody = document.getElementById('tasksTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            let completed = 0, inProg = 0, open = 0;
+            tasksData.forEach(t => {
+                if (t.status === 'Completed') completed++;
+                else if (t.status === 'In-Progress') inProg++;
+                else open++;
+            });
+            const totEl = document.getElementById('taskTotalCount');
+            const compEl = document.getElementById('taskCompletedCount');
+            const progEl = document.getElementById('taskInProgressCount');
+            const opEl = document.getElementById('taskOpenCount');
+            if (totEl) totEl.innerText = tasksData.length;
+            if (compEl) compEl.innerText = completed;
+            if (progEl) progEl.innerText = inProg;
+            if (opEl) opEl.innerText = open;
+
+            items.forEach((t, idx) => {
+                const badge = t.status === 'Completed' ? 'badge-success' : t.status === 'In-Progress' ? 'badge-info' : t.status === 'Review' ? 'badge-danger' : 'badge-warning';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${t.name}</td>
+                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${t.project}</td>
+                    <td><i class="fa-solid fa-user-check" style="color: var(--text-muted); margin-right: 0.35rem;"></i>${t.assigned}</td>
+                    <td style="font-size: 0.8125rem;">${t.start}</td>
+                    <td style="font-size: 0.8125rem; font-weight: 600;">${t.due}</td>
+                    <td><span class="badge ${badge}">${t.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="toggleTaskStatus(${idx})" title="Toggle Status"><i class="fa-solid fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTask(${idx})" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTasks() {
+            const q = (document.getElementById('taskSearch')?.value || '').toLowerCase();
+            const status = document.getElementById('taskStatusFilter')?.value || '';
+            const filtered = tasksData.filter(t => {
+                const matchQ = t.name.toLowerCase().includes(q) || t.assigned.toLowerCase().includes(q) || t.project.toLowerCase().includes(q);
+                const matchS = !status || t.status === status;
+                return matchQ && matchS;
+            });
+            renderTasks(filtered);
+        }
+
+        function toggleTaskStatus(idx) {
+            const current = tasksData[idx].status;
+            tasksData[idx].status = current === 'Completed' ? 'In-Progress' : 'Completed';
+            filterTasks();
+            showToast(`Task status updated to ${tasksData[idx].status}`, 'info');
+        }
+
+        function deleteTask(idx) {
+            if (confirm("Delete this site task?")) {
+                tasksData.splice(idx, 1);
+                filterTasks();
+                showToast("Task deleted", "danger");
+            }
+        }
+
+        function handleCreateTask(e) {
+            e.preventDefault();
+            const newTask = {
+                id: tasksData.length + 1,
+                name: document.getElementById('tName').value,
+                project: document.getElementById('tProject').value,
+                assigned: document.getElementById('tAssigned').value,
+                start: document.getElementById('tStart').value,
+                due: document.getElementById('tDue').value,
+                status: document.getElementById('tStatus').value
+            };
+            tasksData.unshift(newTask);
+            filterTasks();
+            closeModal('newTaskModal');
+            showToast(`Task "${newTask.name}" created successfully!`, 'success');
+        }
+
+        // Render Resources
+        function renderResources(items = resourcesData) {
+            const tbody = document.getElementById('resourcesTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            items.forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${r.name}</td>
+                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${r.project}</td>
+                    <td><span class="badge badge-info">${r.type}</span></td>
+                    <td style="font-weight: 700;">${r.qty} ${r.unit}</td>
+                    <td><span class="badge ${r.status === 'Active' ? 'badge-success' : 'badge-warning'}">${r.status}</span></td>
+                    <td style="font-size: 0.8125rem; color: var(--text-secondary);">${r.remarks}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteResource(${idx})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterResources() {
+            const q = (document.getElementById('resourceSearch')?.value || '').toLowerCase();
+            const type = document.getElementById('resourceTypeFilter')?.value || '';
+            const filtered = resourcesData.filter(r => {
+                const matchQ = r.name.toLowerCase().includes(q) || r.project.toLowerCase().includes(q) || r.remarks.toLowerCase().includes(q);
+                const matchT = !type || r.type === type;
+                return matchQ && matchT;
+            });
+            renderResources(filtered);
+        }
+
+        function deleteResource(idx) {
+            if (confirm("Deallocate this resource item?")) {
+                resourcesData.splice(idx, 1);
+                filterResources();
+                showToast("Resource deallocated", "danger");
+            }
+        }
+
+        function handleCreateResource(e) {
+            e.preventDefault();
+            const newRes = {
+                id: resourcesData.length + 1,
+                name: document.getElementById('rName').value,
+                project: document.getElementById('rProject').value,
+                type: document.getElementById('rType').value,
+                qty: parseInt(document.getElementById('rQty').value) || 1,
+                unit: document.getElementById('rUnit').value,
+                status: "Active",
+                remarks: document.getElementById('rRemarks').value || 'Site deployment'
+            };
+            resourcesData.unshift(newRes);
+            filterResources();
+            closeModal('newResourceModal');
+            showToast(`Resource "${newRes.name}" allocated!`, 'success');
+        }
+
+        // Render Users (Admin Only)
+        function renderUsers(items = usersData) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            items.forEach((u, idx) => {
+                const badge = u.role === 'Admin' ? 'badge-info' : u.role === 'Project Manager' ? 'badge-success' : u.role === 'Site Engineer' ? 'badge-warning' : u.role === 'Accountant' ? 'badge-info' : 'badge-danger';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 700;">${u.name}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent-secondary);">${u.username}</td>
+                    <td style="font-size: 0.8125rem;">${u.email}</td>
+                    <td><span class="badge ${badge}">${u.role}</span></td>
+                    <td><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> ${u.status}</span></td>
+                    <td style="font-size: 0.8125rem; color: var(--text-muted);">${u.desc}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="switchRole(DEMO_ACCOUNTS.find(a => a.username === '${u.username}') || DEMO_ACCOUNTS[0])" title="Impersonate"><i class="fa-solid fa-right-to-bracket"></i> Switch</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            const newUser = {
+                id: usersData.length + 1,
+                name: document.getElementById('uFullName').value,
+                username: document.getElementById('uUsername').value,
+                email: document.getElementById('uEmail').value,
+                role: document.getElementById('uRole').value,
+                status: 'Active',
+                desc: 'Custom Site User'
+            };
+            usersData.push(newUser);
+            renderUsers();
+            closeModal('newUserModal');
+            showToast(`User account "${newUser.username}" created!`, 'success');
+        }
+
         // ================= AUTHENTICATION & RBAC STATE (Matches Localhost) =================
         const DEMO_ACCOUNTS = [
             { username: 'alex.vance', email: 'alex.vance@buildcorp.com', role: 'Admin', name: 'Alex Vance', initials: 'AV', badge: 'badge-info', desc: 'System Admin & Governance' },
@@ -1800,11 +2432,12 @@
             }
         });
 
-        // Switch Role
+        // Switch Role (Updates Sidebar Nav to match Localhost)
         function switchRole(account) {
             currentUser = account;
             localStorage.setItem('buildcorp_user', JSON.stringify(account));
             updateNavbarUser();
+            renderSidebarNav(currentTab);
             const menu = document.getElementById('roleDropdownMenu');
             if (menu) menu.classList.remove('show');
             showToast(`Role switched to ${account.role} (${account.name})`, 'success');
@@ -1882,6 +2515,7 @@
             currentUser = account;
             localStorage.setItem('buildcorp_user', JSON.stringify(account));
             updateNavbarUser();
+            renderSidebarNav('dashboard');
 
             const loginView = document.getElementById('loginView');
             if (loginView) {
@@ -1946,11 +2580,15 @@
                 if (loginView) loginView.style.display = 'flex';
             }
 
+            renderTasks();
+            renderResources();
+            renderUsers();
             renderProjects();
             renderExpenses();
             renderMaterials();
             renderForms(sampleForms);
             renderReports();
+            renderSidebarNav();
 
             // Chart 1: Bar Chart (Budget vs Spent)
             const ctxBar = document.getElementById('budgetBarChart').getContext('2d');

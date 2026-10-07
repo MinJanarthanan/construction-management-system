@@ -203,45 +203,134 @@
             color: #a5b4fc;
         }
 
-        .persona-control {
+        /* Role Switcher & User Profile */
+        .user-nav-profile {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.65rem;
         }
 
-        .persona-select {
-            background: #1e293b;
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
-            padding: 0.4rem 0.85rem;
+        /* Role Switcher Dropdown (Matches Localhost) */
+        .role-switcher-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 275px;
+            background-color: #1e293b;
+            padding: 0.5rem;
             border-radius: var(--radius-md);
-            font-size: 0.8125rem;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .persona-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.75), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-subtle);
-            padding: 0.4rem 0.85rem;
-            border-radius: var(--radius-full);
-            font-size: 0.8125rem;
+            z-index: 100;
+            display: none;
         }
 
-        .avatar-circle {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--accent-primary);
+        .role-switcher-dropdown.show {
+            display: block;
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        .role-option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 0.55rem 0.75rem;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            transition: all 0.15s ease;
+        }
+
+        .role-option-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .role-option-btn.active {
+            background: rgba(99, 102, 241, 0.22);
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        /* Fullscreen Login Screen Overlay (Matches Localhost Login.jsx) */
+        #loginView {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 0.75rem;
+            padding: 1.5rem;
+            background-color: #0b0f19;
+            background-image: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.18) 0%, rgba(15, 23, 42, 1) 70%);
+            overflow-y: auto;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(26, 34, 52, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+            padding: 2.25rem;
+        }
+
+        .login-persona-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.8125rem;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .login-persona-btn:hover {
+            border-color: var(--accent-primary);
+            background-color: rgba(99, 102, 241, 0.12);
+            transform: translateY(-1px);
+        }
+
+        /* Toast Container */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast-msg {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            pointer-events: auto;
+            animation: slideInRight 0.25s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* Views Body */
@@ -548,6 +637,70 @@
 </head>
 <body>
 
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Fullscreen Login View (Matches Localhost Login.jsx) -->
+    <div id="loginView">
+        <div style="width: 100%; max-width: 480px; animation: fadeIn 0.3s ease;">
+            <!-- Brand Header -->
+            <div style="text-align: center; margin-bottom: 1.75rem;">
+                <div style="width: 60px; height: 60px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto 1rem auto; box-shadow: var(--shadow-glow); font-size: 1.75rem;">
+                    <i class="fa-solid fa-helmet-safety"></i>
+                </div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;">BuildCorp CMS</h1>
+                <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.25rem;">Enterprise Construction Database Management System</p>
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.25); padding: 0.3rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; color: #a5b4fc; font-weight: 600;">
+                    <i class="fa-solid fa-graduation-cap"></i> SRM Institute of Science and Technology • CSE AIML
+                </div>
+            </div>
+
+            <!-- Login Card -->
+            <div class="login-card">
+                <!-- Error Alert -->
+                <div id="loginErrorAlert" style="display: none; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); color: var(--danger); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="loginErrorMsg">Please check your credentials</span>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLoginFormSubmit(event)">
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Username or Email</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
+                            <input type="text" id="loginIdentifier" class="form-control" style="padding-left: 2.75rem; width: 100%;" placeholder="e.g. admin_alex or alex.vance" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Password</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-lock" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;"></i>
+                            <input type="password" id="loginPassword" class="form-control" style="padding-left: 2.75rem; width: 100%;" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9375rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span id="loginBtnText">Sign In</span>
+                        <i class="fa-solid fa-arrow-right" id="loginBtnIcon"></i>
+                    </button>
+                </form>
+
+                <!-- Quick Demo Login Personas (Matches Localhost) -->
+                <div style="margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-secondary); font-size: 0.85rem;"></i>
+                        <span style="font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary);">
+                            Demo Accounts Quick-Fill (Click to Test):
+                        </span>
+                    </div>
+
+                    <div id="quickDemoAccountsList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Sidebar Navigation -->
     <aside id="sidebar">
         <div class="sidebar-brand">
@@ -593,28 +746,44 @@
 
     <!-- Main Content Area -->
     <div id="main-wrapper">
-        <!-- Top Navbar -->
+        <!-- Top Navbar (Matches Localhost Navbar.jsx) -->
         <header id="navbar">
-            <div class="academic-badge">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <span>SRM Institute of Science and Technology • CSE AIML</span>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="academic-badge">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>SRM IST • CSE AIML</span>
+                </div>
+                <div class="user-nav-profile">
+                    <span style="font-size: 0.875rem; color: var(--text-secondary);">Welcome,</span>
+                    <span id="navUserName" style="font-size: 0.9375rem; font-weight: 700; color: var(--text-primary);">Alex Vance</span>
+                    <span class="badge badge-info" id="navRoleBadge">Admin</span>
+                </div>
             </div>
 
-            <div class="persona-control">
-                <span style="font-size: 0.8125rem; color: var(--text-muted);">Persona:</span>
-                <select id="personaSelector" class="persona-select" onchange="changePersona(this.value)">
-                    <option value="admin">Alex Vance (Admin)</option>
-                    <option value="pm">Sarah Jenkins (Project Manager)</option>
-                    <option value="engineer">Rajesh Patel (Site Engineer)</option>
-                    <option value="accountant">Elena Rostova (Accountant)</option>
-                    <option value="supervisor">Marcus Brody (Site Supervisor)</option>
-                </select>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- Quick Role Switcher Dropdown (Matches Localhost) -->
+                <div style="position: relative;" id="roleDropdownContainer">
+                    <button type="button" class="btn btn-secondary btn-sm" id="switchRoleBtn" onclick="toggleRoleDropdown(event)" style="display: flex; align-items: center; gap: 0.5rem; border-color: rgba(99, 102, 241, 0.4);" title="Switch demo persona to test RBAC permissions">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--accent-secondary);"></i>
+                        <span>Switch Role</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </button>
 
-                <div class="persona-badge">
-                    <div class="avatar-circle" id="userAvatar">AV</div>
-                    <span id="userName" style="font-weight: 600;">Alex Vance</span>
-                    <span class="badge badge-info" id="userRoleBadge">Admin</span>
+                    <div id="roleDropdownMenu" class="role-switcher-dropdown">
+                        <div style="padding: 0.35rem 0.5rem 0.5rem; border-bottom: 1px solid var(--border-subtle); margin-bottom: 0.25rem;">
+                            <p style="font-size: 0.6875rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Quick Persona Switch (RBAC)
+                            </p>
+                        </div>
+                        <div id="roleOptionsList"></div>
+                    </div>
                 </div>
+
+                <!-- Sign Out Button -->
+                <button type="button" class="btn btn-secondary btn-sm" onclick="logout()" title="Sign Out" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-right-from-bracket" style="color: var(--danger);"></i>
+                    <span>Sign Out</span>
+                </button>
             </div>
         </header>
 
@@ -1537,27 +1706,246 @@
             a.click();
         }
 
-        // Persona Switcher
-        function changePersona(roleKey) {
-            const personas = {
-                admin: { name: "Alex Vance", role: "Admin", initials: "AV", badge: "badge-info" },
-                pm: { name: "Sarah Jenkins", role: "Project Manager", initials: "SJ", badge: "badge-success" },
-                engineer: { name: "Rajesh Patel", role: "Site Engineer", initials: "RP", badge: "badge-warning" },
-                accountant: { name: "Elena Rostova", role: "Accountant", initials: "ER", badge: "badge-info" },
-                supervisor: { name: "Marcus Brody", role: "Site Supervisor", initials: "MB", badge: "badge-danger" }
-            };
-            const p = personas[roleKey];
-            if (p) {
-                document.getElementById('userName').innerText = p.name;
-                document.getElementById('userAvatar').innerText = p.initials;
-                const roleBadge = document.getElementById('userRoleBadge');
-                roleBadge.innerText = p.role;
-                roleBadge.className = 'badge ' + p.badge;
+        // ================= AUTHENTICATION & RBAC STATE (Matches Localhost) =================
+        const DEMO_ACCOUNTS = [
+            { username: 'alex.vance', email: 'alex.vance@buildcorp.com', role: 'Admin', name: 'Alex Vance', initials: 'AV', badge: 'badge-info', desc: 'System Admin & Governance' },
+            { username: 'sarah.jenkins', email: 'sarah.jenkins@buildcorp.com', role: 'Project Manager', name: 'Sarah Jenkins', initials: 'SJ', badge: 'badge-success', desc: 'Multi-Project Delivery' },
+            { username: 'rajesh.patel', email: 'rajesh.patel@buildcorp.com', role: 'Site Engineer', name: 'Rajesh Patel', initials: 'RP', badge: 'badge-warning', desc: 'Site Operations & QA' },
+            { username: 'elena.rostova', email: 'elena.rostova@buildcorp.com', role: 'Accountant', name: 'Elena Rostova', initials: 'ER', badge: 'badge-info', desc: 'Budgets & Cost Audits' },
+            { username: 'marcus.brody', email: 'marcus.brody@buildcorp.com', role: 'Site Supervisor', name: 'Marcus Brody', initials: 'MB', badge: 'badge-danger', desc: 'Field Tasks & Materials' }
+        ];
+
+        let currentUser = null;
+
+        // Toast Notification Helper
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            const icon = type === 'success' ? 'fa-circle-check' : type === 'warning' ? 'fa-triangle-exclamation' : type === 'danger' ? 'fa-circle-xmark' : 'fa-circle-info';
+            const color = type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'danger' ? '#ef4444' : '#6366f1';
+            toast.innerHTML = `<i class="fa-solid ${icon}" style="color: ${color}; font-size: 1.1rem;"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        // Render Quick Demo Personas in Login Card
+        function renderQuickDemoAccounts() {
+            const list = document.getElementById('quickDemoAccountsList');
+            if (!list) return;
+            list.innerHTML = '';
+            DEMO_ACCOUNTS.forEach(acc => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'login-persona-btn';
+                btn.onclick = () => handleQuickLogin(acc);
+                btn.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; color: #fff;">${acc.name}</span>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">(${acc.username})</span>
+                    </div>
+                    <span class="badge ${acc.badge}" style="font-size: 0.6875rem;">${acc.role}</span>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        // Render Role Switcher Dropdown in Navbar
+        function renderRoleDropdownOptions() {
+            const list = document.getElementById('roleOptionsList');
+            if (!list) return;
+            list.innerHTML = '';
+            DEMO_ACCOUNTS.forEach(acc => {
+                const isCurrent = currentUser && currentUser.username === acc.username;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `role-option-btn ${isCurrent ? 'active' : ''}`;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    switchRole(acc);
+                };
+                btn.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <strong style="font-size: 0.8125rem; color: #fff;">${acc.name}</strong>
+                        <span class="badge ${acc.badge}" style="font-size: 0.625rem; padding: 0.15rem 0.45rem;">${acc.role}</span>
+                    </div>
+                    <span style="font-size: 0.6875rem; color: var(--text-muted);">${acc.desc}</span>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        // Toggle Navbar Role Switcher Menu
+        function toggleRoleDropdown(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('roleDropdownMenu');
+            if (menu) {
+                renderRoleDropdownOptions();
+                menu.classList.toggle('show');
+            }
+        }
+
+        // Close dropdown on click outside
+        window.addEventListener('click', (e) => {
+            const container = document.getElementById('roleDropdownContainer');
+            const menu = document.getElementById('roleDropdownMenu');
+            if (menu && container && !container.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+
+        // Switch Role
+        function switchRole(account) {
+            currentUser = account;
+            localStorage.setItem('buildcorp_user', JSON.stringify(account));
+            updateNavbarUser();
+            const menu = document.getElementById('roleDropdownMenu');
+            if (menu) menu.classList.remove('show');
+            showToast(`Role switched to ${account.role} (${account.name})`, 'success');
+        }
+
+        // Quick login via Demo Persona Button
+        function handleQuickLogin(account) {
+            document.getElementById('loginIdentifier').value = account.username;
+            document.getElementById('loginPassword').value = 'Demo@123';
+            const btn = document.getElementById('loginSubmitBtn');
+            const text = document.getElementById('loginBtnText');
+            const icon = document.getElementById('loginBtnIcon');
+            text.innerText = 'Authenticating...';
+            icon.className = 'fa-solid fa-spinner fa-spin';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                completeLogin(account);
+                text.innerText = 'Sign In';
+                icon.className = 'fa-solid fa-arrow-right';
+                btn.disabled = false;
+            }, 300);
+        }
+
+        // Handle Manual Login Form Submit
+        function handleLoginFormSubmit(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('loginIdentifier').value.trim();
+            const pwdInput = document.getElementById('loginPassword').value;
+            const errorAlert = document.getElementById('loginErrorAlert');
+            const errorMsg = document.getElementById('loginErrorMsg');
+
+            if (!idInput || !pwdInput) {
+                errorMsg.innerText = 'Please enter username/email and password.';
+                errorAlert.style.display = 'flex';
+                return;
+            }
+
+            // Find matching account or fallback to custom admin
+            let found = DEMO_ACCOUNTS.find(a => 
+                a.username.toLowerCase() === idInput.toLowerCase() || 
+                a.email.toLowerCase() === idInput.toLowerCase()
+            );
+
+            if (!found) {
+                found = {
+                    username: idInput,
+                    email: `${idInput}@buildcorp.com`,
+                    role: 'Admin',
+                    name: idInput.charAt(0).toUpperCase() + idInput.slice(1),
+                    initials: idInput.substring(0, 2).toUpperCase(),
+                    badge: 'badge-info',
+                    desc: 'Authenticated User'
+                };
+            }
+
+            errorAlert.style.display = 'none';
+            const btn = document.getElementById('loginSubmitBtn');
+            const text = document.getElementById('loginBtnText');
+            const icon = document.getElementById('loginBtnIcon');
+            text.innerText = 'Authenticating...';
+            icon.className = 'fa-solid fa-spinner fa-spin';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                completeLogin(found);
+                text.innerText = 'Sign In';
+                icon.className = 'fa-solid fa-arrow-right';
+                btn.disabled = false;
+            }, 350);
+        }
+
+        // Complete Login Procedure
+        function completeLogin(account) {
+            currentUser = account;
+            localStorage.setItem('buildcorp_user', JSON.stringify(account));
+            updateNavbarUser();
+
+            const loginView = document.getElementById('loginView');
+            if (loginView) {
+                loginView.style.opacity = '0';
+                loginView.style.transition = 'opacity 0.25s ease';
+                setTimeout(() => {
+                    loginView.style.display = 'none';
+                    loginView.style.opacity = '1';
+                }, 250);
+            }
+
+            showToast(`Welcome back, ${account.name}! Logged in as ${account.role}`, 'success');
+        }
+
+        // Sign Out / Logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('buildcorp_user');
+            const menu = document.getElementById('roleDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            const loginView = document.getElementById('loginView');
+            if (loginView) {
+                document.getElementById('loginIdentifier').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginErrorAlert').style.display = 'none';
+                loginView.style.display = 'flex';
+                loginView.style.opacity = '1';
+            }
+            showToast('You have signed out successfully.', 'info');
+        }
+
+        // Update Navbar display with current persona
+        function updateNavbarUser() {
+            if (!currentUser) return;
+            const nameEl = document.getElementById('navUserName');
+            const badgeEl = document.getElementById('navRoleBadge');
+            if (nameEl) nameEl.innerText = currentUser.name;
+            if (badgeEl) {
+                badgeEl.innerText = currentUser.role;
+                badgeEl.className = 'badge ' + (currentUser.badge || 'badge-info');
             }
         }
 
         // Initialize Charts and Tables
         window.addEventListener('DOMContentLoaded', () => {
+            renderQuickDemoAccounts();
+
+            // Check persistent session
+            const savedUser = localStorage.getItem('buildcorp_user');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    updateNavbarUser();
+                    const loginView = document.getElementById('loginView');
+                    if (loginView) loginView.style.display = 'none';
+                } catch(e) {
+                    localStorage.removeItem('buildcorp_user');
+                }
+            } else {
+                const loginView = document.getElementById('loginView');
+                if (loginView) loginView.style.display = 'flex';
+            }
+
             renderProjects();
             renderExpenses();
             renderMaterials();

@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildCorp | Construction Management System - SRM IST DBMS</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(99, 102, 241, 0.4);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --accent-primary: #6366f1;
+            --accent-primary-hover: #4f46e5;
+            --accent-secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+            
+            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
+            --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 260px;
+            background-color: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .brand-text h2 {
+            font-size: 1.125rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text span {
+            font-size: 0.6875rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .nav-list {
+            padding: 1rem 0.75rem;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active a {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(99, 102, 241, 0.05));
+            border-left: 3px solid var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .nav-item a i {
+            font-size: 1.05rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: rgba(11, 15, 25, 0.5);
+        }
+
+        /* Main Content Container */
+        #main-wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        #navbar {
+            height: 70px;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .academic-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 0.35rem 0.85rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a5b4fc;
+        }
+
+        .persona-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .persona-select {
+            background: #1e293b;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .persona-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8125rem;
+        }
+
+        .avatar-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #fff;
+        }
+
+        /* Views Body */
+        .content-container {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Cards & Layout */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-card);
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-info h4 {
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stat-info h2 {
+            font-size: 1.625rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0.2rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-info p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* Tables */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Form Controls */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-control, .form-select {
+            background: #0f172a;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0.6rem 0.85rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        /* MODAL STYLING: Pinned cleanly to the TOP with auto-scroll */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 1.25rem 1rem 2.5rem 1rem;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            margin-top: 0.25rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            animation: modalSlide 0.2s ease-out forwards;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-12px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(30, 41, 59, 0.98);
+        }
+
+        .modal-header h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: calc(100vh - 8rem);
+            overflow-y: auto;
+        }
+
+        .currency-symbol {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-secondary);
+            border-radius: var(--radius-full);
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-helmet-safety"></i>
+            </div>
+            <div class="brand-text">
+                <h2>BuildCorp</h2>
+                <span>DBMS Construction</span>
+            </div>
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="switchTab('dashboard', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('projects', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-building"></i> Projects (8)</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('forms', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-clipboard-check"></i> Site Forms (10k)</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('finance', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-indian-rupee-sign"></i> Finance & Budgets</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('materials', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-boxes-stacked"></i> Materials & Inventory</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('contractors', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-users-gear"></i> Contractors</a>
+            </li>
+            <li class="nav-item" onclick="switchTab('reports', this)">
+                <a href="javascript:void(0)"><i class="fa-solid fa-file-invoice-dollar"></i> Reports & Export</a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <p><strong>SRM IST CSE (AIML)</strong></p>
+            <p>21CSC205P DBMS Project</p>
+            <p style="margin-top: 0.25rem; color: #10b981;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Database Online</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div id="main-wrapper">
+        <!-- Top Navbar -->
+        <header id="navbar">
+            <div class="academic-badge">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>SRM Institute of Science and Technology • CSE AIML</span>
+            </div>
+
+            <div class="persona-control">
+                <span style="font-size: 0.8125rem; color: var(--text-muted);">Persona:</span>
+                <select id="personaSelector" class="persona-select" onchange="changePersona(this.value)">
+                    <option value="admin">Alex Vance (Admin)</option>
+                    <option value="pm">Sarah Jenkins (Project Manager)</option>
+                    <option value="engineer">Rajesh Patel (Site Engineer)</option>
+                    <option value="accountant">Elena Rostova (Accountant)</option>
+                    <option value="supervisor">Marcus Brody (Site Supervisor)</option>
+                </select>
+
+                <div class="persona-badge">
+                    <div class="avatar-circle" id="userAvatar">AV</div>
+                    <span id="userName" style="font-weight: 600;">Alex Vance</span>
+                    <span class="badge badge-info" id="userRoleBadge">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Body -->
+        <main class="content-container">
+
+            <!-- 1. DASHBOARD VIEW -->
+            <section id="view-dashboard" class="view-section active">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Project Dashboard</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Centralized role-based construction telemetry across 8 active job sites</p>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="switchTabByName('forms')"><i class="fa-solid fa-list-check"></i> Site Forms (10k)</button>
+                        <button class="btn btn-primary" onclick="openNewProjectModal()"><i class="fa-solid fa-plus"></i> New Project</button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Cards -->
+                <div class="grid-4">
+                    <div class="glass-card stat-card">
+                        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+                            <i class="fa-solid fa-city"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Active Projects</h4>
+                            <h2>6 / 8</h2>
+                            <p>2 Completed sites</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card stat-card">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Approved Budget</h4>
+                            <h2>₹2,12,50,000</h2>
+                            <p>Spent: ₹1,40,40,000</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card stat-card">
+                        <div class="stat-icon" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee;">
+                            <i class="fa-solid fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Site Workflows</h4>
+                            <h2>42 Tasks</h2>
+                            <p>28 Completed milestones</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card stat-card">
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h4>Low Stock Items</h4>
+                            <h2>3 Alerts</h2>
+                            <p>Immediate re-order advised</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="glass-card">
+                        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;"><i class="fa-solid fa-chart-column" style="color: var(--accent-primary);"></i> Budget vs Spent by Project (₹ in Lakhs)</h3>
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="budgetBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;"><i class="fa-solid fa-chart-pie" style="color: var(--accent-secondary);"></i> Task Status Distribution</h3>
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="taskDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock & Milestones Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700;"><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Low-Stock Material Inventory</h3>
+                            <span class="badge badge-danger">Triggers Active</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Project</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Cost (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TMT Steel Rebars Fe500</strong></td>
+                                        <td>Apex Commercial Tower</td>
+                                        <td><span class="badge badge-danger">8.5 tons</span></td>
+                                        <td>₹58,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Portland Cement OPC 53</strong></td>
+                                        <td>Metro Flyover Extn</td>
+                                        <td><span class="badge badge-danger">9.0 bags</span></td>
+                                        <td>₹385.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ready-Mix Concrete M30</strong></td>
+                                        <td>Greenfield Tech Park</td>
+                                        <td><span class="badge badge-danger">6.0 m³</span></td>
+                                        <td>₹4,500.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700;"><i class="fa-solid fa-calendar-check" style="color: var(--success);"></i> Upcoming Critical Milestones</h3>
+                            <span class="badge badge-success">On Schedule</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Milestone</th>
+                                        <th>Project</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Deep Foundation Pile Caps</strong></td>
+                                        <td>Apex Commercial Tower</td>
+                                        <td>2026-10-15</td>
+                                        <td><span class="badge badge-info">In-Progress</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Pier Girder Erection Span 4</strong></td>
+                                        <td>Metro Flyover Extn</td>
+                                        <td>2026-10-28</td>
+                                        <td><span class="badge badge-info">In-Progress</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>HVAC Chiller Installation</strong></td>
+                                        <td>Greenfield Tech Park</td>
+                                        <td>2026-11-10</td>
+                                        <td><span class="badge badge-warning">Planned</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. PROJECTS VIEW -->
+            <section id="view-projects" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Construction Projects</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Multi-site lifecycle tracking, budgets, contractor assignments & schedules</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewProjectModal()"><i class="fa-solid fa-plus"></i> New Project</button>
+                </div>
+
+                <!-- Projects Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;" id="projectsContainer">
+                    <!-- Populated dynamically via JavaScript -->
+                </div>
+            </section>
+
+            <!-- 3. SITE FORMS (10K DATASET) VIEW -->
+            <section id="view-forms" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Site PM Forms Intelligence</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">10,254 ingested inspection reports across all 8 multi-project sites</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportFormsCSV()"><i class="fa-solid fa-file-export"></i> Export Filtered CSV</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="glass-card" style="padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="formSearch" class="form-control" placeholder="Search forms by title..." style="flex: 1; min-width: 200px;" oninput="filterForms()">
+                    <select id="formProjectFilter" class="form-select" style="width: 200px;" onchange="filterForms()">
+                        <option value="">All Projects (8)</option>
+                        <option value="1328">1328: Apex Tower (4,043)</option>
+                        <option value="1330">1330: Metro Flyover (2,149)</option>
+                        <option value="1329">1329: Greenfield Park (1,212)</option>
+                        <option value="1335">1335: Harbor Terminal (804)</option>
+                        <option value="1340">1340: Horizon Complex (744)</option>
+                        <option value="1338">1338: Solar Substation (510)</option>
+                        <option value="1343">1343: Urban Expressway (396)</option>
+                        <option value="1345">1345: Marina Promenade (396)</option>
+                    </select>
+                    <select id="formGroupFilter" class="form-select" style="width: 180px;" onchange="filterForms()">
+                        <option value="">All Report Groups</option>
+                        <option value="Safety">Safety</option>
+                        <option value="Quality">Quality</option>
+                        <option value="Environmental">Environmental</option>
+                        <option value="Daily Log">Daily Log</option>
+                        <option value="Structural Inspection">Structural Inspection</option>
+                    </select>
+                </div>
+
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table id="formsTable">
+                            <thead>
+                                <tr>
+                                    <th>Form ID</th>
+                                    <th>Project</th>
+                                    <th>Report Title</th>
+                                    <th>Group / Type</th>
+                                    <th>Created Date</th>
+                                    <th>Status Class</th>
+                                    <th>Open Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="formsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. FINANCE & BUDGETS VIEW -->
+            <section id="view-finance" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Finance & Cost Management</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Multi-project capital allocations, cost categories, and expense transaction ledgers in Indian Rupees (₹)</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewExpenseModal()"><i class="fa-solid fa-plus"></i> Record Expense</button>
+                </div>
+
+                <!-- 3 Finance Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Approved Capital</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0;" class="currency-symbol">₹2,12,50,000.00</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Across 8 allocated projects</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Recorded Expenses</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: #34d399;">₹1,40,40,000.00</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Verified site invoices</p>
+                    </div>
+                    <div class="glass-card">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Available Remaining Variance</span>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--info);">₹72,10,000.00</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">66.1% capital utilized</p>
+                    </div>
+                </div>
+
+                <!-- Expense Ledger Table -->
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="font-size: 1.05rem; font-weight: 700;">Expense Transaction Ledger</h3>
+                        <span class="badge badge-info">Audited Ledger</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Project</th>
+                                    <th>Category</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Invoice / Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseLedgerBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. MATERIALS & INVENTORY VIEW -->
+            <section id="view-materials" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Materials & Inventory</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Material requisition, automated total cost calculation, and low-stock replenishment alerts</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewMaterialModal()"><i class="fa-solid fa-plus"></i> Add Material</button>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Warehouse Valuation</span>
+                    <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--success); margin: 0.25rem 0;">₹42,85,000.00</h2>
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary);">Automated DB Trigger: Total_Cost = Quantity × Unit_Cost</p>
+                </div>
+
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Material Name</th>
+                                    <th>Assigned Project</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Cost (₹)</th>
+                                    <th>Total Valuation (₹)</th>
+                                    <th>Stock Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. CONTRACTORS VIEW -->
+            <section id="view-contractors" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">General Contractors & Vendors</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Licensed general contractors, specialized trades, and performance ratings</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Larsen & Toubro ECC</h3>
+                            <span class="badge badge-success">Class A-1</span>
+                        </div>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">Primary contractor for high-rise commercial foundations and superstructure.</p>
+                        <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.4rem;">
+                            <p><i class="fa-solid fa-user-tie"></i> Contact: Suresh Nambiar</p>
+                            <p><i class="fa-solid fa-phone"></i> +91 44 2256 7890</p>
+                            <p><i class="fa-solid fa-envelope"></i> contact@lt-ecc.com</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Shapoorji Pallonji Infra</h3>
+                            <span class="badge badge-success">Class A-1</span>
+                        </div>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">Specialized in pre-stressed concrete girders and metro transit corridors.</p>
+                        <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.4rem;">
+                            <p><i class="fa-solid fa-user-tie"></i> Contact: Ratan Mistry</p>
+                            <p><i class="fa-solid fa-phone"></i> +91 22 6749 1100</p>
+                            <p><i class="fa-solid fa-envelope"></i> infra@shapoorji.com</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Tata Projects Limited</h3>
+                            <span class="badge badge-success">Class A-1</span>
+                        </div>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">Executing MEP, solar electrification, and substation commissioning.</p>
+                        <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.4rem;">
+                            <p><i class="fa-solid fa-user-tie"></i> Contact: Ananya Sen</p>
+                            <p><i class="fa-solid fa-phone"></i> +91 40 6623 4400</p>
+                            <p><i class="fa-solid fa-envelope"></i> energy@tataprojects.com</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Afcons Infrastructure</h3>
+                            <span class="badge badge-success">Class A-1</span>
+                        </div>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">Marine works, seawall piling, and harbor container freight handling.</p>
+                        <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.4rem;">
+                            <p><i class="fa-solid fa-user-tie"></i> Contact: K. R. Ramanathan</p>
+                            <p><i class="fa-solid fa-phone"></i> +91 44 2855 0192</p>
+                            <p><i class="fa-solid fa-envelope"></i> marine@afcons.com</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. REPORTS & EXPORT VIEW -->
+            <section id="view-reports" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h1 style="font-size: 1.75rem; font-weight: 800;">Budget vs Actual Analytical Report</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Automated SQL Views: v_project_financials and stored procedures summary</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="exportBudgetCSV()"><i class="fa-solid fa-file-csv"></i> Export Financial Report</button>
+                </div>
+
+                <div class="glass-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Contractor</th>
+                                    <th>Approved Budget (₹)</th>
+                                    <th>Total Spent (₹)</th>
+                                    <th>Variance (₹)</th>
+                                    <th>Burn Rate</th>
+                                    <th>Category Split</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL 1: NEW PROJECT MODAL (Top Positioned) -->
+    <div id="newProjectModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Create New Construction Project</h3>
+                <button class="close-btn" onclick="closeModal('newProjectModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newProjectForm" onsubmit="handleCreateProject(event)">
+                    <div class="form-group">
+                        <label class="form-label">Project Name *</label>
+                        <input type="text" id="pName" class="form-control" required placeholder="e.g. SRM Tech Hub Phase 2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="pDesc" class="form-control" rows="2" placeholder="Civil works scope..."></textarea>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Start Date *</label>
+                            <input type="date" id="pStart" class="form-control" required value="2026-10-10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date *</label>
+                            <input type="date" id="pEnd" class="form-control" required value="2027-04-10">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="pStatus" class="form-select">
+                                <option value="Planned">Planned</option>
+                                <option value="In-Progress">In-Progress</option>
+                                <option value="On-Hold">On-Hold</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Manager</label>
+                            <select id="pManager" class="form-select">
+                                <option value="Sarah Jenkins">Sarah Jenkins (Project Manager)</option>
+                                <option value="Rajesh Patel">Rajesh Patel (Site Engineer)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-subtle); margin-top: 0.5rem; padding-top: 0.75rem;">
+                        <h4 style="font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-secondary);">Capital Budget Allocation</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Total Budget (₹)</label>
+                                <input type="number" id="pTotalBudget" class="form-control" placeholder="25000000" value="25000000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Approved Budget (₹) *</label>
+                                <input type="number" id="pApprovedBudget" class="form-control" required placeholder="22000000" value="22000000">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newProjectModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: RECORD EXPENSE MODAL (Top Positioned) -->
+    <div id="newExpenseModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Record New Expense</h3>
+                <button class="close-btn" onclick="closeModal('newExpenseModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newExpenseForm" onsubmit="handleCreateExpense(event)">
+                    <div class="form-group">
+                        <label class="form-label">Project *</label>
+                        <select id="expProject" class="form-select" required>
+                            <option value="Apex Commercial Tower">Apex Commercial Tower</option>
+                            <option value="Metro Flyover Extn">Metro Flyover Extn</option>
+                            <option value="Greenfield Tech Park">Greenfield Tech Park</option>
+                            <option value="Harbor Container Terminal">Harbor Container Terminal</option>
+                            <option value="Horizon Residential Complex">Horizon Residential Complex</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="expCategory" class="form-select">
+                                <option value="Material">Material</option>
+                                <option value="Labor">Labor</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Misc">Misc</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amount (₹) *</label>
+                            <input type="number" id="expAmount" step="0.01" class="form-control" required placeholder="0.00" value="75000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expense Date *</label>
+                        <input type="date" id="expDate" class="form-control" required value="2026-10-05">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description / Invoice Reference</label>
+                        <input type="text" id="expDesc" class="form-control" placeholder="e.g. Scaffolding erection safety certificate" value="Site inspection fee">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newExpenseModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Log Expense</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADD MATERIAL MODAL (Top Positioned) -->
+    <div id="newMaterialModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Requisition New Material</h3>
+                <button class="close-btn" onclick="closeModal('newMaterialModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newMaterialForm" onsubmit="handleCreateMaterial(event)">
+                    <div class="form-group">
+                        <label class="form-label">Material Name *</label>
+                        <input type="text" id="matName" class="form-control" required placeholder="e.g. Reinforcement Bars Fe500D">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project *</label>
+                        <select id="matProject" class="form-select" required>
+                            <option value="Apex Commercial Tower">Apex Commercial Tower</option>
+                            <option value="Metro Flyover Extn">Metro Flyover Extn</option>
+                            <option value="Greenfield Tech Park">Greenfield Tech Park</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" id="matQty" step="0.1" class="form-control" required placeholder="50" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit *</label>
+                            <input type="text" id="matUnit" class="form-control" required placeholder="ton, bag, m³" value="ton">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit Cost (₹) *</label>
+                            <input type="number" id="matCost" step="0.01" class="form-control" required placeholder="55000" value="55000">
+                        </div>
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        * Database Trigger auto-computes Total_Cost = Quantity × Unit_Cost. Items with Quantity ≤ 10 trigger low-stock alerts.
+                    </p>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('newMaterialModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Material</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // State Store
+        const projectsData = [
+            { id: 1328, name: "Apex Commercial Tower", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 35000000, spent: 24500000, completion: 74, forms: 4043 },
+            { id: 1330, name: "Metro Flyover Extn", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 42000000, spent: 31200000, completion: 68, forms: 2149 },
+            { id: 1329, name: "Greenfield Tech Park", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 28000000, spent: 18900000, completion: 82, forms: 1212 },
+            { id: 1335, name: "Harbor Container Terminal", status: "In-Progress", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 22000000, spent: 14600000, completion: 55, forms: 804 },
+            { id: 1340, name: "Horizon Residential Complex", status: "Planned", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 19500000, spent: 2500000, completion: 15, forms: 744 },
+            { id: 1338, name: "Solar Power Substation", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 16000000, spent: 12800000, completion: 88, forms: 510 },
+            { id: 1343, name: "Urban Expressway Underpass", status: "Completed", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 27000000, spent: 26100000, completion: 100, forms: 396 },
+            { id: 1345, name: "Marina Seafront Promenade", status: "Completed", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 23000000, spent: 22800000, completion: 100, forms: 396 }
+        ];
+
+        let expensesData = [
+            { id: 1, date: "2026-10-04", project: "Apex Commercial Tower", category: "Labor", amount: 95000, desc: "Steel reinforcement tying crew overtime" },
+            { id: 2, date: "2026-10-02", project: "Metro Flyover Extn", category: "Material", amount: 145000, desc: "Pre-stressing tendon coils lot #4" },
+            { id: 3, date: "2026-09-28", project: "Greenfield Tech Park", category: "Equipment", amount: 82000, desc: "Hydraulic crawler crane monthly hire" },
+            { id: 4, date: "2026-09-25", project: "Harbor Container Terminal", category: "Labor", amount: 65000, desc: "Piling rig operator wages" },
+            { id: 5, date: "2026-09-20", project: "Solar Power Substation", category: "Material", amount: 210000, desc: "33kV step-up transformer switchgear" }
+        ];
+
+        let materialsData = [
+            { id: 1, name: "TMT Steel Rebars Fe500", project: "Apex Commercial Tower", qty: 8.5, unit: "ton", cost: 58000, isLow: true },
+            { id: 2, name: "Portland Cement OPC 53", project: "Metro Flyover Extn", qty: 9.0, unit: "bag", cost: 385, isLow: true },
+            { id: 3, name: "Ready-Mix Concrete M30", project: "Greenfield Tech Park", qty: 6.0, unit: "m³", cost: 4500, isLow: true },
+            { id: 4, name: "Structural Steel I-Beams", project: "Apex Commercial Tower", qty: 45.0, unit: "ton", cost: 62000, isLow: false },
+            { id: 5, name: "Sand & River Aggregates", project: "Harbor Container Terminal", qty: 120.0, unit: "ton", cost: 1850, isLow: false }
+        ];
+
+        const sampleForms = [
+            { id: "FRM-10254", project: "1328: Apex Tower", title: "Daily Site Supervisor Log - Zone C Decking", group: "Daily Log", date: "2026-10-04", status: "Closed", actions: 0 },
+            { id: "FRM-10253", project: "1330: Metro Flyover", title: "Span 4 Girder Pre-stressing Checklist", group: "Structural Inspection", date: "2026-10-04", status: "Open", actions: 2 },
+            { id: "FRM-10252", project: "1329: Greenfield Park", title: "HVAC Duct Leakage Compliance Check", group: "Quality", date: "2026-10-03", status: "Closed", actions: 0 },
+            { id: "FRM-10251", project: "1335: Harbor Terminal", title: "Excavator Hydraulic Oil Spill Inspection", group: "Environmental", date: "2026-10-02", status: "Open", actions: 1 },
+            { id: "FRM-10250", project: "1340: Horizon Complex", title: "Subsoil Compaction Plate Load Test", group: "Quality", date: "2026-10-02", status: "Closed", actions: 0 },
+            { id: "FRM-10249", project: "1338: Solar Substation", title: "Lightning Arrester Earthing Pit Audit", group: "Safety", date: "2026-10-01", status: "Closed", actions: 0 },
+            { id: "FRM-10248", project: "1328: Apex Tower", title: "Scaffolding Erection Safety Tagging", group: "Safety", date: "2026-09-30", status: "Open", actions: 3 }
+        ];
+
+        // Format Currency Helper
+        function formatINR(val) {
+            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatINRRound(val) {
+            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        }
+
+        // Modal Controls with Top Scroll Reset
+        function openNewProjectModal() {
+            const modal = document.getElementById('newProjectModal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
+        }
+
+        function openNewExpenseModal() {
+            const modal = document.getElementById('newExpenseModal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
+        }
+
+        function openNewMaterialModal() {
+            const modal = document.getElementById('newMaterialModal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function closeModals(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        }
+
+        // Tab Navigation
+        function switchTab(viewName, element) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.classList.add('active');
+            if (element) element.classList.add('active');
+        }
+
+        function switchTabByName(viewName) {
+            const items = document.querySelectorAll('.nav-item');
+            const map = { dashboard: 0, projects: 1, forms: 2, finance: 3, materials: 4, contractors: 5, reports: 6 };
+            if (map[viewName] !== undefined) {
+                switchTab(viewName, items[map[viewName]]);
+            }
+        }
+
+        // Render Projects Grid
+        function renderProjects() {
+            const container = document.getElementById('projectsContainer');
+            container.innerHTML = '';
+            projectsData.forEach(p => {
+                const statusBadge = p.status === 'Completed' ? 'badge-success' : p.status === 'In-Progress' ? 'badge-info' : 'badge-warning';
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 1.15rem; font-weight: 700;">${p.name}</h3>
+                        <span class="badge ${statusBadge}">${p.status}</span>
+                    </div>
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        <i class="fa-solid fa-user-tie" style="color: var(--accent-primary);"></i> Manager: ${p.manager}<br>
+                        <i class="fa-solid fa-helmet-safety" style="color: var(--warning);"></i> Contractor: ${p.contractor}
+                    </p>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.35rem;">
+                            <span>Completion</span>
+                            <span style="color: var(--accent-secondary);">${p.completion}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-fill" style="width: ${p.completion}%;"></div>
+                        </div>
+                    </div>
+                    <div style="padding: 0.75rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.8125rem;">
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.75rem;">Budget:</span><br>
+                            <strong>${formatINRRound(p.budget)}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.75rem;">Spent:</span><br>
+                            <strong style="color: var(--success);">${formatINRRound(p.spent)}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.75rem;">Forms:</span><br>
+                            <strong style="color: var(--accent-secondary);">${p.forms}</strong>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render Expense Ledger
+        function renderExpenses() {
+            const tbody = document.getElementById('expenseLedgerBody');
+            tbody.innerHTML = '';
+            expensesData.forEach((e, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${e.date}</td>
+                    <td style="font-weight: 600;">${e.project}</td>
+                    <td><span class="badge badge-info">${e.category}</span></td>
+                    <td style="font-weight: 700; color: var(--success);">${formatINR(e.amount)}</td>
+                    <td style="color: var(--text-secondary);">${e.desc}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteExpense(${idx})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteExpense(index) {
+            if (confirm("Delete this verified expense transaction?")) {
+                expensesData.splice(index, 1);
+                renderExpenses();
+            }
+        }
+
+        // Render Materials Table
+        function renderMaterials() {
+            const tbody = document.getElementById('materialsTableBody');
+            tbody.innerHTML = '';
+            materialsData.forEach(m => {
+                const isLow = m.qty <= 10;
+                const totalCost = m.qty * m.cost;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${m.name}</td>
+                    <td style="color: var(--accent-secondary);">${m.project}</td>
+                    <td>${m.qty} ${m.unit}</td>
+                    <td>${formatINR(m.cost)}</td>
+                    <td style="font-weight: 700;">${formatINR(totalCost)}</td>
+                    <td>
+                        ${isLow ? '<span class="badge badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock</span>' : '<span class="badge badge-success">In Stock</span>'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render Site Forms Table
+        function renderForms(list) {
+            const tbody = document.getElementById('formsTableBody');
+            tbody.innerHTML = '';
+            list.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-family: var(--font-mono); font-weight: 600; color: var(--accent-secondary);">${f.id}</td>
+                    <td>${f.project}</td>
+                    <td style="font-weight: 600;">${f.title}</td>
+                    <td><span class="badge badge-info">${f.group}</span></td>
+                    <td>${f.date}</td>
+                    <td><span class="badge ${f.status === 'Closed' ? 'badge-success' : 'badge-warning'}">${f.status}</span></td>
+                    <td>${f.actions > 0 ? `<span class="badge badge-danger">${f.actions} Open</span>` : '<span class="badge badge-success">None</span>'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterForms() {
+            const search = document.getElementById('formSearch').value.toLowerCase();
+            const proj = document.getElementById('formProjectFilter').value;
+            const group = document.getElementById('formGroupFilter').value;
+
+            const filtered = sampleForms.filter(f => {
+                const matchesSearch = f.title.toLowerCase().includes(search) || f.id.toLowerCase().includes(search);
+                const matchesProj = !proj || f.project.includes(proj);
+                const matchesGroup = !group || f.group === group;
+                return matchesSearch && matchesProj && matchesGroup;
+            });
+            renderForms(filtered);
+        }
+
+        // Render Reports Table
+        function renderReports() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+            projectsData.forEach(p => {
+                const variance = p.budget - p.spent;
+                const burnRate = ((p.spent / p.budget) * 100).toFixed(1);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${p.name}</td>
+                    <td>${p.contractor}</td>
+                    <td>${formatINR(p.budget)}</td>
+                    <td style="font-weight: 700; color: var(--success);">${formatINR(p.spent)}</td>
+                    <td style="color: ${variance >= 0 ? 'var(--info)' : 'var(--danger)'}; font-weight: 600;">${formatINR(variance)}</td>
+                    <td>
+                        <span style="font-size: 0.75rem; font-weight: 700;">${burnRate}%</span>
+                        <div class="progress-bar-bg" style="width: 60px; display: inline-block; vertical-align: middle; margin-left: 0.4rem;">
+                            <div class="progress-fill" style="width: ${Math.min(burnRate, 100)}%;"></div>
+                        </div>
+                    </td>
+                    <td style="font-size: 0.75rem; color: var(--text-muted);">Labor: 45% • Mat: 40% • Eq: 15%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Form Submit Handlers
+        function handleCreateProject(e) {
+            e.preventDefault();
+            const newProj = {
+                id: 1350 + projectsData.length,
+                name: document.getElementById('pName').value,
+                status: document.getElementById('pStatus').value,
+                manager: document.getElementById('pManager').value,
+                contractor: "Larsen & Toubro ECC",
+                budget: parseFloat(document.getElementById('pApprovedBudget').value) || 20000000,
+                spent: 0,
+                completion: 0,
+                forms: 0
+            };
+            projectsData.unshift(newProj);
+            renderProjects();
+            renderReports();
+            closeModal('newProjectModal');
+            alert(`Project "${newProj.name}" created successfully with Approved Budget of ${formatINR(newProj.budget)}!`);
+        }
+
+        function handleCreateExpense(e) {
+            e.preventDefault();
+            const newExp = {
+                id: expensesData.length + 1,
+                date: document.getElementById('expDate').value,
+                project: document.getElementById('expProject').value,
+                category: document.getElementById('expCategory').value,
+                amount: parseFloat(document.getElementById('expAmount').value) || 0,
+                desc: document.getElementById('expDesc').value
+            };
+            expensesData.unshift(newExp);
+            renderExpenses();
+            closeModal('newExpenseModal');
+            alert(`Expense of ${formatINR(newExp.amount)} recorded on ${newExp.project}!`);
+        }
+
+        function handleCreateMaterial(e) {
+            e.preventDefault();
+            const newMat = {
+                id: materialsData.length + 1,
+                name: document.getElementById('matName').value,
+                project: document.getElementById('matProject').value,
+                qty: parseFloat(document.getElementById('matQty').value) || 0,
+                unit: document.getElementById('matUnit').value,
+                cost: parseFloat(document.getElementById('matCost').value) || 0,
+                isLow: parseFloat(document.getElementById('matQty').value) <= 10
+            };
+            materialsData.unshift(newMat);
+            renderMaterials();
+            closeModal('newMaterialModal');
+            alert(`Material "${newMat.name}" added with Total Valuation of ${formatINR(newMat.qty * newMat.cost)}!`);
+        }
+
+        // CSV Exports
+        function exportBudgetCSV() {
+            let csv = "Project Name,Contractor,Approved Budget (INR),Total Spent (INR),Variance (INR)\n";
+            projectsData.forEach(p => {
+                csv += `"${p.name}","${p.contractor}",${p.budget},${p.spent},${p.budget - p.spent}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BuildCorp_Budget_Report_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function exportFormsCSV() {
+            let csv = "Form ID,Project,Title,Group,Date,Status,Open Actions\n";
+            sampleForms.forEach(f => {
+                csv += `"${f.id}","${f.project}","${f.title}","${f.group}",${f.date},${f.status},${f.actions}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BuildCorp_Site_Forms_10k_Extract.csv`;
+            a.click();
+        }
+
+        // Persona Switcher
+        function changePersona(roleKey) {
+            const personas = {
+                admin: { name: "Alex Vance", role: "Admin", initials: "AV", badge: "badge-info" },
+                pm: { name: "Sarah Jenkins", role: "Project Manager", initials: "SJ", badge: "badge-success" },
+                engineer: { name: "Rajesh Patel", role: "Site Engineer", initials: "RP", badge: "badge-warning" },
+                accountant: { name: "Elena Rostova", role: "Accountant", initials: "ER", badge: "badge-info" },
+                supervisor: { name: "Marcus Brody", role: "Site Supervisor", initials: "MB", badge: "badge-danger" }
+            };
+            const p = personas[roleKey];
+            if (p) {
+                document.getElementById('userName').innerText = p.name;
+                document.getElementById('userAvatar').innerText = p.initials;
+                const roleBadge = document.getElementById('userRoleBadge');
+                roleBadge.innerText = p.role;
+                roleBadge.className = 'badge ' + p.badge;
+            }
+        }
+
+        // Initialize Charts and Tables
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProjects();
+            renderExpenses();
+            renderMaterials();
+            renderForms(sampleForms);
+            renderReports();
+
+            // Chart 1: Bar Chart (Budget vs Spent)
+            const ctxBar = document.getElementById('budgetBarChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Apex Tower', 'Metro Flyover', 'Greenfield Park', 'Harbor Term', 'Horizon Res', 'Solar Sub'],
+                    datasets: [
+                        {
+                            label: 'Approved Budget (₹ in Lakhs)',
+                            data: [350, 420, 280, 220, 195, 160],
+                            backgroundColor: '#6366f1',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Total Spent (₹ in Lakhs)',
+                            data: [245, 312, 189, 146, 25, 128],
+                            backgroundColor: '#10b981',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: val => '₹' + val + 'L'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 12 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ctx.dataset.label + ': ₹' + ctx.raw + ' Lakhs'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Task Donut Chart
+            const ctxDonut = document.getElementById('taskDonutChart').getContext('2d');
+            new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Done (28)', 'In-Progress (10)', 'Review (3)', 'To-Do (1)'],
+                    datasets: [{
+                        data: [28, 10, 3, 1],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#64748b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

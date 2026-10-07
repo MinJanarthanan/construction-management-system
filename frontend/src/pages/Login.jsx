@@ -31,14 +31,14 @@ const Login = () => {
 
   const handleQuickLogin = async (account) => {
     setIdentifier(account.username);
-    setPassword('password123');
+    setPassword('Demo@123');
     setError('');
     setLoading(true);
     try {
-      await login(account.username, 'password123');
+      await login(account.username, 'Demo@123');
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Quick login failed.');
+      setError(err.response?.data?.error || 'Quick login failed. Ensure the backend server is running on port 5000.');
     } finally {
       setLoading(false);
     }

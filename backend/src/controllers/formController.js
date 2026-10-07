@@ -126,16 +126,20 @@ exports.getFormStats = async (req, res) => {
     const projectFilter = projectId ? `WHERE f.Project_ID = ${projectId}` : '';
     const projectWhere = projectId ? `WHERE Project_ID = ${projectId}` : '';
 
+    const isSqlite = sequelize.getDialect() === 'sqlite';
+    const monthExpr = isSqlite ? `strftime('%Y-%m', Created_Date)` : `DATE_FORMAT(Created_Date, '%Y-%m')`;
+    const staleDateExpr = isSqlite ? `date('now', '-30 day')` : `DATE_SUB(CURDATE(), INTERVAL 30 DAY)`;
+
     // (a) Forms per month (2019-02 to 2020-09)
     const [formsPerMonth] = await sequelize.query(`
       SELECT 
-        DATE_FORMAT(Created_Date, '%Y-%m') as Month,
+        ${monthExpr} as Month,
         COUNT(*) as Count,
         SUM(CASE WHEN Status_Class = 'Open' THEN 1 ELSE 0 END) as OpenCount,
         SUM(CASE WHEN Status_Class = 'Closed' THEN 1 ELSE 0 END) as ClosedCount
       FROM SITE_FORM
       ${projectWhere}
-      GROUP BY DATE_FORMAT(Created_Date, '%Y-%m')
+      GROUP BY ${monthExpr}
       ORDER BY Month ASC
     `);
 
@@ -186,7 +190,7 @@ exports.getFormStats = async (req, res) => {
         COUNT(CASE WHEN Open_Actions > 0 THEN 1 END) as FormsWithOpenActions,
         COALESCE(SUM(Open_Actions), 0) as TotalOpenActions,
         COALESCE(SUM(Total_Actions), 0) as TotalRecordedActions,
-        COUNT(CASE WHEN Status_Class = 'Open' AND Status_Changed_Date < DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as StaleOpenForms
+        COUNT(CASE WHEN Status_Class = 'Open' AND Status_Changed_Date < ${staleDateExpr} THEN 1 END) as StaleOpenForms
       FROM SITE_FORM
       ${projectWhere}
     `);

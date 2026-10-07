@@ -185,7 +185,28 @@ const getDashboardStats = async (req, res) => {
     };
 
     // Low stock materials using view or threshold
-    const [lowStockDb] = await sequelize.query(`SELECT * FROM v_low_stock`);
+    let lowStockDb = [];
+    try {
+      const [res] = await sequelize.query(`SELECT * FROM v_low_stock`);
+      lowStockDb = res;
+    } catch {
+      const mats = await Material.findAll({
+        include: [{ model: Project, as: 'project', attributes: ['Project_Name'] }]
+      });
+      lowStockDb = mats
+        .filter(m => parseFloat(m.Quantity) <= parseFloat(m.Reorder_Level))
+        .map(m => ({
+          Material_ID: m.Material_ID,
+          Material_Name: m.Material_Name,
+          Project_ID: m.Project_ID,
+          Project_Name: m.project ? m.project.Project_Name : `Project #${m.Project_ID}`,
+          Quantity: m.Quantity,
+          Unit: m.Unit,
+          Unit_Cost: m.Unit_Cost,
+          Total_Cost: m.Total_Cost,
+          Reorder_Level: m.Reorder_Level
+        }));
+    }
 
     const upcomingMilestones = milestones
       .filter(m => m.Status === 'Pending' || m.Status === 'Delayed')

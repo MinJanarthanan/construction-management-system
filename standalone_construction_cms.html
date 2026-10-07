@@ -737,10 +737,18 @@
                     <span style="font-size: 0.875rem; color: var(--text-secondary);">Welcome,</span>
                     <span id="navUserName" style="font-size: 0.9375rem; font-weight: 700; color: var(--text-primary);">Alex Vance</span>
                     <span class="badge badge-info" id="navRoleBadge">Admin</span>
+                    <span class="badge badge-info" id="navDomainAccessPill" style="font-size: 0.6875rem; border: 1px dashed rgba(99, 102, 241, 0.5);">Full System Admin</span>
                 </div>
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- Live DBMS Backend Button -->
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openDbManagerModal()" style="display: flex; align-items: center; gap: 0.45rem; border-color: rgba(16, 185, 129, 0.4);" title="Open Persistent DBMS & Backend Engine Control Panel">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+                    <i class="fa-solid fa-database" style="color: #10b981; font-size: 0.8rem;"></i>
+                    <span style="font-size: 0.75rem; font-weight: 600;">DB Backend</span>
+                </button>
+
                 <!-- Quick Role Switcher Dropdown (Matches Localhost) -->
                 <div style="position: relative;" id="roleDropdownContainer">
                     <button type="button" class="btn btn-secondary btn-sm" id="switchRoleBtn" onclick="toggleRoleDropdown(event)" style="display: flex; align-items: center; gap: 0.5rem; border-color: rgba(99, 102, 241, 0.4);" title="Switch demo persona to test RBAC permissions">
@@ -772,12 +780,13 @@
 
             <!-- 1. DASHBOARD VIEW -->
             <section id="view-dashboard" class="view-section active">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
                         <h1 style="font-size: 1.75rem; font-weight: 800;">Project Dashboard</h1>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Centralized role-based construction telemetry across 8 active job sites</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Centralized role-based construction telemetry with persistent local database engine</p>
                     </div>
                     <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="openDbManagerModal()"><i class="fa-solid fa-server"></i> DB Status</button>
                         <button class="btn btn-secondary" onclick="switchTabByName('forms')"><i class="fa-solid fa-list-check"></i> Site Forms (10k)</button>
                         <button class="btn btn-primary" onclick="openNewProjectModal()"><i class="fa-solid fa-plus"></i> New Project</button>
                     </div>
@@ -791,8 +800,8 @@
                         </div>
                         <div class="stat-info">
                             <h4>Active Projects</h4>
-                            <h2>6 / 8</h2>
-                            <p>2 Completed sites</p>
+                            <h2 id="kpiActiveProjects">6 / 8</h2>
+                            <p id="kpiCompletedProjects">2 Completed sites</p>
                         </div>
                     </div>
 
@@ -802,8 +811,8 @@
                         </div>
                         <div class="stat-info">
                             <h4>Approved Budget</h4>
-                            <h2>₹2,12,50,000</h2>
-                            <p>Spent: ₹1,40,40,000</p>
+                            <h2 id="kpiApprovedBudget">₹2,12,50,000</h2>
+                            <p id="kpiTotalSpent">Spent: ₹1,40,40,000</p>
                         </div>
                     </div>
 
@@ -813,8 +822,8 @@
                         </div>
                         <div class="stat-info">
                             <h4>Site Workflows</h4>
-                            <h2>42 Tasks</h2>
-                            <p>28 Completed milestones</p>
+                            <h2 id="kpiTotalTasks">7 Tasks</h2>
+                            <p id="kpiCompletedTasks">2 Completed milestones</p>
                         </div>
                     </div>
 
@@ -824,7 +833,7 @@
                         </div>
                         <div class="stat-info">
                             <h4>Low Stock Items</h4>
-                            <h2>3 Alerts</h2>
+                            <h2 id="kpiLowStockAlerts">3 Alerts</h2>
                             <p>Immediate re-order advised</p>
                         </div>
                     </div>
@@ -933,10 +942,16 @@
             <section id="view-projects" class="view-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h1 style="font-size: 1.75rem; font-weight: 800;">Construction Projects</h1>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Multi-site lifecycle tracking, budgets, contractor assignments & schedules</p>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                            <h1 style="font-size: 1.75rem; font-weight: 800;">Construction Projects</h1>
+                            <span id="projectsDomainBadge" class="badge badge-info"><i class="fa-solid fa-lock-open"></i> Admin Full Access</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Multi-site lifecycle tracking, budgets, contractor assignments & schedules (Live SQLite DBMS Backend)</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openNewProjectModal()"><i class="fa-solid fa-plus"></i> New Project</button>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="openDbManagerModal()"><i class="fa-solid fa-database"></i> DB Engine</button>
+                        <button class="btn btn-primary" onclick="openNewProjectModal()"><i class="fa-solid fa-plus"></i> New Project</button>
+                    </div>
                 </div>
 
                 <!-- Projects Grid -->
@@ -949,7 +964,10 @@
             <section id="view-tasks" class="view-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h1 style="font-size: 1.75rem; font-weight: 800;">Site Tasks & Milestones</h1>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                            <h1 style="font-size: 1.75rem; font-weight: 800;">Site Tasks & Milestones</h1>
+                            <span id="tasksDomainBadge" class="badge badge-info">Admin / PM / Site Eng Domain</span>
+                        </div>
                         <p style="color: var(--text-secondary); font-size: 0.875rem;">Field execution milestones, sub-contractor deliverables, and due date compliance</p>
                     </div>
                     <button class="btn btn-primary" onclick="openNewTaskModal()"><i class="fa-solid fa-plus"></i> Add New Task</button>
@@ -1191,7 +1209,10 @@
             <section id="view-finance" class="view-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h1 style="font-size: 1.75rem; font-weight: 800;">Finance & Cost Management</h1>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                            <h1 style="font-size: 1.75rem; font-weight: 800;">Finance & Cost Management</h1>
+                            <span id="financeDomainBadge" class="badge badge-info">Accountant & Admin Domain</span>
+                        </div>
                         <p style="color: var(--text-secondary); font-size: 0.875rem;">Multi-project capital allocations, cost categories, and expense transaction ledgers in Indian Rupees (₹)</p>
                     </div>
                     <button class="btn btn-primary" onclick="openNewExpenseModal()"><i class="fa-solid fa-plus"></i> Record Expense</button>
@@ -1201,18 +1222,18 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
                     <div class="glass-card">
                         <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Approved Capital</span>
-                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0;" class="currency-symbol">₹2,12,50,000.00</h2>
-                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Across 8 allocated projects</p>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0;" class="currency-symbol" id="finTotalApproved">₹2,12,50,000.00</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">Across all allocated projects</p>
                     </div>
                     <div class="glass-card">
                         <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Recorded Expenses</span>
-                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: #34d399;">₹1,40,40,000.00</h2>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: #34d399;" id="finTotalExpenses">₹1,40,40,000.00</h2>
                         <p style="font-size: 0.8125rem; color: var(--text-secondary);">Verified site invoices</p>
                     </div>
                     <div class="glass-card">
                         <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Available Remaining Variance</span>
-                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--info);">₹72,10,000.00</h2>
-                        <p style="font-size: 0.8125rem; color: var(--text-secondary);">66.1% capital utilized</p>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0.25rem 0; color: var(--info);" id="finRemainingVariance">₹72,10,000.00</h2>
+                        <p style="font-size: 0.8125rem; color: var(--text-secondary);" id="finVariancePercent">Capital variance reserve</p>
                     </div>
                 </div>
 
@@ -1246,7 +1267,10 @@
             <section id="view-materials" class="view-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h1 style="font-size: 1.75rem; font-weight: 800;">Materials & Inventory</h1>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                            <h1 style="font-size: 1.75rem; font-weight: 800;">Materials & Inventory</h1>
+                            <span id="materialsDomainBadge" class="badge badge-info">Site Engineer & Admin Domain</span>
+                        </div>
                         <p style="color: var(--text-secondary); font-size: 0.875rem;">Material requisition, automated total cost calculation, and low-stock replenishment alerts</p>
                     </div>
                     <button class="btn btn-primary" onclick="openNewMaterialModal()"><i class="fa-solid fa-plus"></i> Add Material</button>
@@ -1254,7 +1278,7 @@
 
                 <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
                     <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Warehouse Valuation</span>
-                    <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--success); margin: 0.25rem 0;">₹42,85,000.00</h2>
+                    <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--success); margin: 0.25rem 0;" id="matTotalValuation">₹42,85,000.00</h2>
                     <p style="font-size: 0.8125rem; color: var(--text-secondary);">Automated DB Trigger: Total_Cost = Quantity × Unit_Cost</p>
                 </div>
 
@@ -1269,6 +1293,7 @@
                                     <th>Unit Cost (₹)</th>
                                     <th>Total Valuation (₹)</th>
                                     <th>Stock Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="materialsTableBody">
@@ -1381,7 +1406,7 @@
     <div id="newProjectModal" class="modal-overlay" onclick="closeModals(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3>Create New Construction Project</h3>
+                <h3><i class="fa-solid fa-folder-plus" style="color: var(--accent-primary);"></i> Create New Construction Project</h3>
                 <button class="close-btn" onclick="closeModal('newProjectModal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -1391,8 +1416,8 @@
                         <input type="text" id="pName" class="form-control" required placeholder="e.g. SRM Tech Hub Phase 2">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <textarea id="pDesc" class="form-control" rows="2" placeholder="Civil works scope..."></textarea>
+                        <label class="form-label">Description / Work Scope</label>
+                        <textarea id="pDesc" class="form-control" rows="2" placeholder="Civil works scope, structural specs..."></textarea>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
@@ -1400,13 +1425,13 @@
                             <input type="date" id="pStart" class="form-control" required value="2026-10-10">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">End Date *</label>
+                            <label class="form-label">Target Completion Date *</label>
                             <input type="date" id="pEnd" class="form-control" required value="2027-04-10">
                         </div>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label class="form-label">Status</label>
+                            <label class="form-label">Initial Status</label>
                             <select id="pStatus" class="form-select">
                                 <option value="Planned">Planned</option>
                                 <option value="In-Progress">In-Progress</option>
@@ -1415,31 +1440,453 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Manager</label>
+                            <label class="form-label">Project Manager</label>
                             <select id="pManager" class="form-select">
                                 <option value="Sarah Jenkins">Sarah Jenkins (Project Manager)</option>
                                 <option value="Rajesh Patel">Rajesh Patel (Site Engineer)</option>
+                                <option value="Alex Vance">Alex Vance (System Admin)</option>
                             </select>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Assigned General Contractor *</label>
+                        <select id="pContractor" class="form-select">
+                            <option value="Larsen & Toubro ECC">Larsen & Toubro ECC</option>
+                            <option value="Shapoorji Pallonji Infra">Shapoorji Pallonji Infra</option>
+                            <option value="Tata Projects Limited">Tata Projects Limited</option>
+                            <option value="Afcons Infrastructure">Afcons Infrastructure</option>
+                        </select>
+                    </div>
                     <div style="border-top: 1px solid var(--border-subtle); margin-top: 0.5rem; padding-top: 0.75rem;">
-                        <h4 style="font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-secondary);">Capital Budget Allocation</h4>
+                        <h4 style="font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-secondary);">Capital Budget Allocation (₹ INR)</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div class="form-group">
-                                <label class="form-label">Total Budget (₹)</label>
+                                <label class="form-label">Total Projected Budget (₹)</label>
                                 <input type="number" id="pTotalBudget" class="form-control" placeholder="25000000" value="25000000">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Approved Budget (₹) *</label>
+                                <label class="form-label">Approved Capital Budget (₹) *</label>
                                 <input type="number" id="pApprovedBudget" class="form-control" required placeholder="22000000" value="22000000">
                             </div>
                         </div>
                     </div>
                     <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('newProjectModal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create Project</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Save to Database</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1B: EDIT PROJECT MODAL (Admin & Project Manager Domain) -->
+    <div id="editProjectModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-primary);"></i> Edit Project Specifications</h3>
+                <button class="close-btn" onclick="closeModal('editProjectModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProjectForm" onsubmit="handleSaveEditProject(event)">
+                    <input type="hidden" id="editProjId">
+                    <div class="form-group">
+                        <label class="form-label">Project Name *</label>
+                        <input type="text" id="editProjName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description / Work Scope</label>
+                        <textarea id="editProjDesc" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Start Date *</label>
+                            <input type="date" id="editProjStart" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Completion Date *</label>
+                            <input type="date" id="editProjEnd" class="form-control" required>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Execution Status</label>
+                            <select id="editProjStatus" class="form-select">
+                                <option value="Planned">Planned</option>
+                                <option value="In-Progress">In-Progress</option>
+                                <option value="On-Hold">On-Hold</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Progress (% Completion)</label>
+                            <input type="number" id="editProjCompletion" class="form-control" min="0" max="100" required>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Project Manager</label>
+                            <select id="editProjManager" class="form-select">
+                                <option value="Sarah Jenkins">Sarah Jenkins (Project Manager)</option>
+                                <option value="Rajesh Patel">Rajesh Patel (Site Engineer)</option>
+                                <option value="Alex Vance">Alex Vance (System Admin)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">General Contractor</label>
+                            <select id="editProjContractor" class="form-select">
+                                <option value="Larsen & Toubro ECC">Larsen & Toubro ECC</option>
+                                <option value="Shapoorji Pallonji Infra">Shapoorji Pallonji Infra</option>
+                                <option value="Tata Projects Limited">Tata Projects Limited</option>
+                                <option value="Afcons Infrastructure">Afcons Infrastructure</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-subtle); margin-top: 0.5rem; padding-top: 0.75rem;">
+                        <h4 style="font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-secondary);">Capital Budget Allocation (₹ INR)</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Approved Capital Budget (₹) *</label>
+                                <input type="number" id="editProjBudget" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Total Spent to Date (₹) *</label>
+                                <input type="number" id="editProjSpent" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editProjectModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Project Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT TASK MODAL -->
+    <div id="editTaskModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-primary);"></i> Edit Site Task</h3>
+                <button class="close-btn" onclick="closeModal('editTaskModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm" onsubmit="handleSaveEditTask(event)">
+                    <input type="hidden" id="editTaskId">
+                    <div class="form-group">
+                        <label class="form-label">Task Description *</label>
+                        <input type="text" id="editTaskName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assigned Project *</label>
+                        <select id="editTaskProject" class="form-select" required></select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Assigned Officer</label>
+                            <select id="editTaskAssigned" class="form-select">
+                                <option value="Rajesh Patel">Rajesh Patel (Site Engineer)</option>
+                                <option value="Marcus Brody">Marcus Brody (Site Supervisor)</option>
+                                <option value="Sarah Jenkins">Sarah Jenkins (Project Manager)</option>
+                                <option value="Alex Vance">Alex Vance (System Admin)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Task Status</label>
+                            <select id="editTaskStatus" class="form-select">
+                                <option value="Open">Open</option>
+                                <option value="In-Progress">In-Progress</option>
+                                <option value="Review">Review</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="editTaskStart" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" id="editTaskDue" class="form-control" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editTaskModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT MATERIAL MODAL -->
+    <div id="editMaterialModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-primary);"></i> Edit Material Inventory</h3>
+                <button class="close-btn" onclick="closeModal('editMaterialModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editMaterialForm" onsubmit="handleSaveEditMaterial(event)">
+                    <input type="hidden" id="editMatId">
+                    <div class="form-group">
+                        <label class="form-label">Material Name *</label>
+                        <input type="text" id="editMatName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assigned Project *</label>
+                        <select id="editMatProject" class="form-select" required></select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" id="editMatQty" step="0.1" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit *</label>
+                            <input type="text" id="editMatUnit" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit Cost (₹) *</label>
+                            <input type="number" id="editMatCost" step="0.01" class="form-control" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editMaterialModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Material</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT EXPENSE MODAL -->
+    <div id="editExpenseModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-primary);"></i> Edit Expense Transaction</h3>
+                <button class="close-btn" onclick="closeModal('editExpenseModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editExpenseForm" onsubmit="handleSaveEditExpense(event)">
+                    <input type="hidden" id="editExpId">
+                    <div class="form-group">
+                        <label class="form-label">Project *</label>
+                        <select id="editExpProject" class="form-select" required></select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="editExpCategory" class="form-select">
+                                <option value="Material">Material</option>
+                                <option value="Labor">Labor</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Misc">Misc</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amount (₹) *</label>
+                            <input type="number" id="editExpAmount" step="0.01" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expense Date *</label>
+                        <input type="date" id="editExpDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description / Invoice Reference</label>
+                        <input type="text" id="editExpDesc" class="form-control" required>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editExpenseModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Expense</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT RESOURCE MODAL -->
+    <div id="editResourceModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square" style="color: var(--accent-primary);"></i> Edit Resource Allocation</h3>
+                <button class="close-btn" onclick="closeModal('editResourceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editResourceForm" onsubmit="handleSaveEditResource(event)">
+                    <input type="hidden" id="editResId">
+                    <div class="form-group">
+                        <label class="form-label">Resource / Equipment Name *</label>
+                        <input type="text" id="editResName" class="form-control" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Project Allocation *</label>
+                            <select id="editResProject" class="form-select" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select id="editResType" class="form-select">
+                                <option value="Heavy Equipment">Heavy Equipment</option>
+                                <option value="Heavy Machinery">Heavy Machinery</option>
+                                <option value="Skilled Labor">Skilled Labor</option>
+                                <option value="Fleet Vehicle">Fleet Vehicle</option>
+                                <option value="Sub-Contract Crew">Sub-Contract Crew</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" id="editResQty" class="form-control" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="editResStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Standby">Standby</option>
+                                <option value="Maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Remarks</label>
+                        <input type="text" id="editResRemarks" class="form-control">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editResourceModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT USER MODAL (Admin Only) -->
+    <div id="editUserModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-pen" style="color: var(--accent-primary);"></i> Edit Platform User (Admin Only)</h3>
+                <button class="close-btn" onclick="closeModal('editUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm" onsubmit="handleSaveEditUser(event)">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="editUserName" class="form-control" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="editUserUsername" class="form-control" readonly style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Official Email *</label>
+                            <input type="email" id="editUserEmail" class="form-control" required>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Security Role *</label>
+                            <select id="editUserRole" class="form-select">
+                                <option value="Admin">Admin</option>
+                                <option value="Project Manager">Project Manager</option>
+                                <option value="Site Engineer">Site Engineer</option>
+                                <option value="Accountant">Accountant</option>
+                                <option value="Site Supervisor">Site Supervisor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Status</label>
+                            <select id="editUserStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role Scope / Description</label>
+                        <input type="text" id="editUserDesc" class="form-control" required>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editUserModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DATABASE & BACKEND PERSISTENCE MANAGER -->
+    <div id="dbManagerModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 680px;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <i class="fa-solid fa-database" style="color: #10b981; font-size: 1.25rem;"></i>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.15rem;">Live Database & Backend Engine</h3>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Client DBMS Storage Layer (HTML5 LocalStorage + SQLite Schema Emulation)</p>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeModal('dbManagerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Status Row -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+                        <div>
+                            <strong style="font-size: 0.875rem; color: #10b981;">Backend Database Online & Connected</strong>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">All changes, additions, and edits are automatically saved to persistent storage.</p>
+                        </div>
+                    </div>
+                    <span class="badge badge-success">SQL Engine Active</span>
+                </div>
+
+                <!-- Record Statistics Grid -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Projects</span>
+                        <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--accent-primary); margin-top: 0.2rem;" id="dbCountProjects">0</h4>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Tasks</span>
+                        <h4 style="font-size: 1.25rem; font-weight: 800; color: #3b82f6; margin-top: 0.2rem;" id="dbCountTasks">0</h4>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Materials</span>
+                        <h4 style="font-size: 1.25rem; font-weight: 800; color: #f59e0b; margin-top: 0.2rem;" id="dbCountMaterials">0</h4>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Expenses</span>
+                        <h4 style="font-size: 1.25rem; font-weight: 800; color: #10b981; margin-top: 0.2rem;" id="dbCountExpenses">0</h4>
+                    </div>
+                </div>
+
+                <!-- Database Operations -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+                    <h4 style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.75rem;">Database Maintenance & Backup</h4>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="exportDatabaseJSON()"><i class="fa-solid fa-download"></i> Backup DB (JSON)</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('dbRestoreInput').click()"><i class="fa-solid fa-upload"></i> Restore DB</button>
+                        <input type="file" id="dbRestoreInput" style="display: none;" accept=".json" onchange="importDatabaseJSON(event)">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="resetDatabaseToSeed()"><i class="fa-solid fa-rotate-left"></i> Reset to Factory Seed</button>
+                    </div>
+                </div>
+
+                <!-- Live SQL Query Logs -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <h4 style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Simulated SQL Execution Stream</h4>
+                        <span style="font-size: 0.6875rem; color: var(--accent-secondary); font-family: var(--font-mono);">SQLite WAL Engine</span>
+                    </div>
+                    <div id="dbQueryLogStream" style="background: #060911; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); padding: 0.75rem; font-family: var(--font-mono); font-size: 0.75rem; color: #38bdf8; height: 130px; overflow-y: auto; line-height: 1.4;">
+                        <!-- Live log rows -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1710,19 +2157,30 @@
 
     <!-- Application Script -->
     <script>
-        // State Store
-        const projectsData = [
-            { id: 1328, name: "Apex Commercial Tower", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 35000000, spent: 24500000, completion: 74, forms: 4043 },
-            { id: 1330, name: "Metro Flyover Extn", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 42000000, spent: 31200000, completion: 68, forms: 2149 },
-            { id: 1329, name: "Greenfield Tech Park", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 28000000, spent: 18900000, completion: 82, forms: 1212 },
-            { id: 1335, name: "Harbor Container Terminal", status: "In-Progress", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 22000000, spent: 14600000, completion: 55, forms: 804 },
-            { id: 1340, name: "Horizon Residential Complex", status: "Planned", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 19500000, spent: 2500000, completion: 15, forms: 744 },
-            { id: 1338, name: "Solar Power Substation", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 16000000, spent: 12800000, completion: 88, forms: 510 },
-            { id: 1343, name: "Urban Expressway Underpass", status: "Completed", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 27000000, spent: 26100000, completion: 100, forms: 396 },
-            { id: 1345, name: "Marina Seafront Promenade", status: "Completed", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 23000000, spent: 22800000, completion: 100, forms: 396 }
+        // ================= CLIENT-SIDE PERSISTENT DBMS & BACKEND ENGINE =================
+        const DB_STORAGE_KEYS = {
+            projects: 'buildcorp_dbms_projects_v2',
+            expenses: 'buildcorp_dbms_expenses_v2',
+            materials: 'buildcorp_dbms_materials_v2',
+            tasks: 'buildcorp_dbms_tasks_v2',
+            resources: 'buildcorp_dbms_resources_v2',
+            users: 'buildcorp_dbms_users_v2',
+            forms: 'buildcorp_dbms_forms_v2',
+            logs: 'buildcorp_dbms_logs_v2'
+        };
+
+        const INITIAL_PROJECTS = [
+            { id: 1328, code: "ACT-01", name: "Apex Commercial Tower", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 35000000, spent: 24500000, completion: 74, forms: 4043, startDate: "2025-01-15", endDate: "2027-06-30", desc: "45-floor Grade-A commercial skyscraper with 3-tier basement parking." },
+            { id: 1330, code: "MFE-04", name: "Metro Flyover Extn", status: "In-Progress", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 42000000, spent: 31200000, completion: 68, forms: 2149, startDate: "2024-11-01", endDate: "2026-12-15", desc: "4.2 km elevated transit viaduct with pre-cast segmental box girders." },
+            { id: 1329, code: "GTP-02", name: "Greenfield Tech Park", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 28000000, spent: 18900000, completion: 82, forms: 1212, startDate: "2025-03-10", endDate: "2026-11-20", desc: "LEED Platinum sustainable IT campus spanning 12 acres." },
+            { id: 1335, code: "HCT-03", name: "Harbor Container Terminal", status: "In-Progress", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 22000000, spent: 14600000, completion: 55, forms: 804, startDate: "2025-05-01", endDate: "2027-02-28", desc: "Deep-water quay extension with heavy duty crane rails & yard paving." },
+            { id: 1340, code: "HRC-05", name: "Horizon Residential Complex", status: "Planned", manager: "Sarah Jenkins", contractor: "Larsen & Toubro ECC", budget: 19500000, spent: 2500000, completion: 15, forms: 744, startDate: "2026-08-01", endDate: "2028-05-30", desc: "Twin 28-storey luxury residential towers with podium clubhouse." },
+            { id: 1338, code: "SPS-06", name: "Solar Power Substation", status: "In-Progress", manager: "Rajesh Patel", contractor: "Tata Projects Limited", budget: 16000000, spent: 12800000, completion: 88, forms: 510, startDate: "2025-02-15", endDate: "2026-10-30", desc: "33/11kV grid interconnection substation with harmonic filter banks." },
+            { id: 1343, code: "UEU-07", name: "Urban Expressway Underpass", status: "Completed", manager: "Sarah Jenkins", contractor: "Shapoorji Pallonji Infra", budget: 27000000, spent: 26100000, completion: 100, forms: 396, startDate: "2024-04-01", endDate: "2026-03-31", desc: "6-lane grade separation underpass with diaphragm wall protection." },
+            { id: 1345, code: "MSP-08", name: "Marina Seafront Promenade", status: "Completed", manager: "Rajesh Patel", contractor: "Afcons Infrastructure", budget: 23000000, spent: 22800000, completion: 100, forms: 396, startDate: "2024-06-15", endDate: "2026-04-15", desc: "Coastal revetment, walkway beautification, and pedestrian plaza." }
         ];
 
-        let expensesData = [
+        const INITIAL_EXPENSES = [
             { id: 1, date: "2026-10-04", project: "Apex Commercial Tower", category: "Labor", amount: 95000, desc: "Steel reinforcement tying crew overtime" },
             { id: 2, date: "2026-10-02", project: "Metro Flyover Extn", category: "Material", amount: 145000, desc: "Pre-stressing tendon coils lot #4" },
             { id: 3, date: "2026-09-28", project: "Greenfield Tech Park", category: "Equipment", amount: 82000, desc: "Hydraulic crawler crane monthly hire" },
@@ -1730,25 +2188,15 @@
             { id: 5, date: "2026-09-20", project: "Solar Power Substation", category: "Material", amount: 210000, desc: "33kV step-up transformer switchgear" }
         ];
 
-        let materialsData = [
-            { id: 1, name: "TMT Steel Rebars Fe500", project: "Apex Commercial Tower", qty: 8.5, unit: "ton", cost: 58000, isLow: true },
-            { id: 2, name: "Portland Cement OPC 53", project: "Metro Flyover Extn", qty: 9.0, unit: "bag", cost: 385, isLow: true },
-            { id: 3, name: "Ready-Mix Concrete M30", project: "Greenfield Tech Park", qty: 6.0, unit: "m³", cost: 4500, isLow: true },
-            { id: 4, name: "Structural Steel I-Beams", project: "Apex Commercial Tower", qty: 45.0, unit: "ton", cost: 62000, isLow: false },
-            { id: 5, name: "Sand & River Aggregates", project: "Harbor Container Terminal", qty: 120.0, unit: "ton", cost: 1850, isLow: false }
+        const INITIAL_MATERIALS = [
+            { id: 1, name: "TMT Steel Rebars Fe500", project: "Apex Commercial Tower", qty: 8.5, unit: "ton", cost: 58000 },
+            { id: 2, name: "Portland Cement OPC 53", project: "Metro Flyover Extn", qty: 9.0, unit: "bag", cost: 385 },
+            { id: 3, name: "Ready-Mix Concrete M30", project: "Greenfield Tech Park", qty: 6.0, unit: "m³", cost: 4500 },
+            { id: 4, name: "Structural Steel I-Beams", project: "Apex Commercial Tower", qty: 45.0, unit: "ton", cost: 62000 },
+            { id: 5, name: "Sand & River Aggregates", project: "Harbor Container Terminal", qty: 120.0, unit: "ton", cost: 1850 }
         ];
 
-        const sampleForms = [
-            { id: "FRM-10254", project: "1328: Apex Tower", title: "Daily Site Supervisor Log - Zone C Decking", group: "Daily Log", date: "2026-10-04", status: "Closed", actions: 0 },
-            { id: "FRM-10253", project: "1330: Metro Flyover", title: "Span 4 Girder Pre-stressing Checklist", group: "Structural Inspection", date: "2026-10-04", status: "Open", actions: 2 },
-            { id: "FRM-10252", project: "1329: Greenfield Park", title: "HVAC Duct Leakage Compliance Check", group: "Quality", date: "2026-10-03", status: "Closed", actions: 0 },
-            { id: "FRM-10251", project: "1335: Harbor Terminal", title: "Excavator Hydraulic Oil Spill Inspection", group: "Environmental", date: "2026-10-02", status: "Open", actions: 1 },
-            { id: "FRM-10250", project: "1340: Horizon Complex", title: "Subsoil Compaction Plate Load Test", group: "Quality", date: "2026-10-02", status: "Closed", actions: 0 },
-            { id: "FRM-10249", project: "1338: Solar Substation", title: "Lightning Arrester Earthing Pit Audit", group: "Safety", date: "2026-10-01", status: "Closed", actions: 0 },
-            { id: "FRM-10248", project: "1328: Apex Tower", title: "Scaffolding Erection Safety Tagging", group: "Safety", date: "2026-09-30", status: "Open", actions: 3 }
-        ];
-
-        let tasksData = [
+        const INITIAL_TASKS = [
             { id: 1, name: "Foundation Excavation & Soil Piling", project: "Apex Commercial Tower", assigned: "Rajesh Patel", start: "2026-09-15", due: "2026-10-20", status: "In-Progress" },
             { id: 2, name: "Scaffolding Erection Level 4", project: "Metro Flyover Extn", assigned: "Marcus Brody", start: "2026-09-25", due: "2026-10-15", status: "Open" },
             { id: 3, name: "HVAC Conduit Inspection QA", project: "Greenfield Tech Park", assigned: "Rajesh Patel", start: "2026-09-20", due: "2026-10-08", status: "Completed" },
@@ -1758,7 +2206,7 @@
             { id: 7, name: "Flyover Span 4 Girder Pre-stressing", project: "Metro Flyover Extn", assigned: "Rajesh Patel", start: "2026-10-05", due: "2026-10-22", status: "Open" }
         ];
 
-        let resourcesData = [
+        const INITIAL_RESOURCES = [
             { id: 1, name: "Hydraulic Excavator CAT 320", project: "Apex Commercial Tower", type: "Heavy Equipment", qty: 2, unit: "Units", status: "Active", remarks: "Excavation Zone B" },
             { id: 2, name: "Tower Crane Potain MC 85", project: "Greenfield Tech Park", type: "Heavy Machinery", qty: 1, unit: "Units", status: "Active", remarks: "Tower 1 Core" },
             { id: 3, name: "RCC Bar Bending Labor Crew", project: "Metro Flyover Extn", type: "Skilled Labor", qty: 24, unit: "Workers", status: "Active", remarks: "Span 4 Piers" },
@@ -1767,7 +2215,7 @@
             { id: 6, name: "Mobile Diesel Generator 250 kVA", project: "Solar Power Substation", type: "Heavy Equipment", qty: 2, unit: "Generators", status: "Standby", remarks: "Substation Testing" }
         ];
 
-        let usersData = [
+        const INITIAL_USERS = [
             { id: 1, name: "Alex Vance", username: "alex.vance", email: "alex.vance@buildcorp.com", role: "Admin", status: "Active", desc: "System Admin & Governance" },
             { id: 2, name: "Sarah Jenkins", username: "sarah.jenkins", email: "sarah.jenkins@buildcorp.com", role: "Project Manager", status: "Active", desc: "Multi-Project Delivery" },
             { id: 3, name: "Rajesh Patel", username: "rajesh.patel", email: "rajesh.patel@buildcorp.com", role: "Site Engineer", status: "Active", desc: "Site Operations & QA" },
@@ -1775,180 +2223,354 @@
             { id: 5, name: "Marcus Brody", username: "marcus.brody", email: "marcus.brody@buildcorp.com", role: "Site Supervisor", status: "Active", desc: "Field Tasks & Materials" }
         ];
 
-        // Format Currency Helper
-        function formatINR(val) {
-            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
+        const INITIAL_FORMS = [
+            { id: "FRM-10254", project: "1328: Apex Tower", title: "Daily Site Supervisor Log - Zone C Decking", group: "Daily Log", date: "2026-10-04", status: "Closed", actions: 0 },
+            { id: "FRM-10253", project: "1330: Metro Flyover", title: "Span 4 Girder Pre-stressing Checklist", group: "Structural Inspection", date: "2026-10-04", status: "Open", actions: 2 },
+            { id: "FRM-10252", project: "1329: Greenfield Park", title: "HVAC Duct Leakage Compliance Check", group: "Quality", date: "2026-10-03", status: "Closed", actions: 0 },
+            { id: "FRM-10251", project: "1335: Harbor Terminal", title: "Excavator Hydraulic Oil Spill Inspection", group: "Environmental", date: "2026-10-02", status: "Open", actions: 1 },
+            { id: "FRM-10250", project: "1340: Horizon Complex", title: "Subsoil Compaction Plate Load Test", group: "Quality", date: "2026-10-02", status: "Closed", actions: 0 },
+            { id: "FRM-10249", project: "1338: Solar Substation", title: "Lightning Arrester Earthing Pit Audit", group: "Safety", date: "2026-10-01", status: "Closed", actions: 0 },
+            { id: "FRM-10248", project: "1328: Apex Tower", title: "Scaffolding Erection Safety Tagging", group: "Safety", date: "2026-09-30", status: "Open", actions: 3 }
+        ];
 
-        function formatINRRound(val) {
-            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
-        }
+        // Centralized DBMS Engine Object
+        const DB = {
+            get(key) {
+                try {
+                    const data = localStorage.getItem(DB_STORAGE_KEYS[key]);
+                    return data ? JSON.parse(data) : null;
+                } catch(e) {
+                    console.error("DB Get error:", e);
+                    return null;
+                }
+            },
+            set(key, val) {
+                try {
+                    localStorage.setItem(DB_STORAGE_KEYS[key], JSON.stringify(val));
+                } catch(e) {
+                    console.error("DB Set error:", e);
+                }
+            },
+            log(query) {
+                try {
+                    let logs = this.get('logs') || [];
+                    logs.unshift({ timestamp: new Date().toLocaleTimeString(), query });
+                    if (logs.length > 50) logs.pop();
+                    this.set('logs', logs);
+                } catch(e) {}
+            }
+        };
 
-        // Modal Controls with Top Scroll Reset
-        function openNewProjectModal() {
-            const modal = document.getElementById('newProjectModal');
-            modal.classList.add('active');
-            modal.scrollTop = 0;
-        }
+        // Active State Data
+        let projectsData = [];
+        let expensesData = [];
+        let materialsData = [];
+        let tasksData = [];
+        let resourcesData = [];
+        let usersData = [];
+        let sampleForms = [];
 
-        function openNewExpenseModal() {
-            const modal = document.getElementById('newExpenseModal');
-            modal.classList.add('active');
-            modal.scrollTop = 0;
-        }
+        function loadAllData() {
+            projectsData = DB.get('projects');
+            if (!projectsData || !Array.isArray(projectsData) || projectsData.length === 0) {
+                projectsData = [...INITIAL_PROJECTS];
+                DB.set('projects', projectsData);
+                DB.log("INIT: Seeded projects table (8 records)");
+            }
 
-        function openNewMaterialModal() {
-            const modal = document.getElementById('newMaterialModal');
-            modal.classList.add('active');
-            modal.scrollTop = 0;
-        }
+            expensesData = DB.get('expenses');
+            if (!expensesData || !Array.isArray(expensesData) || expensesData.length === 0) {
+                expensesData = [...INITIAL_EXPENSES];
+                DB.set('expenses', expensesData);
+                DB.log("INIT: Seeded expenses ledger (5 records)");
+            }
 
-        function openNewTaskModal() {
-            const modal = document.getElementById('newTaskModal');
-            if (modal) {
-                modal.classList.add('active');
-                modal.scrollTop = 0;
+            materialsData = DB.get('materials');
+            if (!materialsData || !Array.isArray(materialsData) || materialsData.length === 0) {
+                materialsData = [...INITIAL_MATERIALS];
+                DB.set('materials', materialsData);
+                DB.log("INIT: Seeded materials inventory (5 records)");
+            }
+
+            tasksData = DB.get('tasks');
+            if (!tasksData || !Array.isArray(tasksData) || tasksData.length === 0) {
+                tasksData = [...INITIAL_TASKS];
+                DB.set('tasks', tasksData);
+                DB.log("INIT: Seeded site tasks table (7 records)");
+            }
+
+            resourcesData = DB.get('resources');
+            if (!resourcesData || !Array.isArray(resourcesData) || resourcesData.length === 0) {
+                resourcesData = [...INITIAL_RESOURCES];
+                DB.set('resources', resourcesData);
+                DB.log("INIT: Seeded resources allocation table (6 records)");
+            }
+
+            usersData = DB.get('users');
+            if (!usersData || !Array.isArray(usersData) || usersData.length === 0) {
+                usersData = [...INITIAL_USERS];
+                DB.set('users', usersData);
+                DB.log("INIT: Seeded user governance table (5 records)");
+            }
+
+            sampleForms = DB.get('forms');
+            if (!sampleForms || !Array.isArray(sampleForms) || sampleForms.length === 0) {
+                sampleForms = [...INITIAL_FORMS];
+                DB.set('forms', sampleForms);
+                DB.log("INIT: Seeded site PM inspection forms (7 records)");
             }
         }
 
-        function openNewResourceModal() {
-            const modal = document.getElementById('newResourceModal');
-            if (modal) {
-                modal.classList.add('active');
-                modal.scrollTop = 0;
-            }
-        }
+        // Persistence Sync Methods
+        function saveProjects() { DB.set('projects', projectsData); }
+        function saveExpenses() { DB.set('expenses', expensesData); }
+        function saveMaterials() { DB.set('materials', materialsData); }
+        function saveTasks() { DB.set('tasks', tasksData); }
+        function saveResources() { DB.set('resources', resourcesData); }
+        function saveUsers() { DB.set('users', usersData); }
 
-        function openNewUserModal() {
-            const modal = document.getElementById('newUserModal');
-            if (modal) {
-                modal.classList.add('active');
-                modal.scrollTop = 0;
-            }
-        }
-
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            if (el) el.classList.remove('active');
-        }
-
-        function closeModals(e) {
-            if (e.target.classList.contains('modal-overlay')) {
-                e.target.classList.remove('active');
-            }
-        }
-
-        // ================= DYNAMIC ROLE-BASED SIDEBAR NAVIGATION (Matches Localhost Sidebar.jsx) =================
-        let currentTab = 'dashboard';
-
-        function getNavItemsForRole(role) {
-            const isAdmin = role === 'Admin';
-            const isAccountant = role === 'Accountant';
-            const isSiteSupervisor = role === 'Site Supervisor';
-
-            return [
-                { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie' },
-                { id: 'projects', label: 'Projects (8)', icon: 'fa-building' },
-                ...(!isAccountant ? [
-                    { id: 'tasks', label: 'Tasks', icon: 'fa-square-check' },
-                    { id: 'materials', label: 'Materials & Stock', icon: 'fa-boxes-stacked' },
-                    { id: 'resources', label: 'Resources & Labor', icon: 'fa-wrench' }
-                ] : []),
-                ...(isAdmin || isAccountant || !isSiteSupervisor ? [
-                    { id: 'finance', label: 'Finance & Budgets', icon: 'fa-indian-rupee-sign' },
-                    { id: 'contractors', label: 'Contractors', icon: 'fa-users-gear' }
-                ] : []),
-                ...(isAdmin ? [
-                    { id: 'users', label: 'User Governance', icon: 'fa-user-shield' }
-                ] : []),
-                { id: 'forms', label: 'Site Forms (10k)', icon: 'fa-clipboard-check' },
-                { id: 'reports', label: 'Reports & Export', icon: 'fa-file-invoice-dollar' }
-            ];
-        }
-
-        function renderSidebarNav(activeTabId = currentTab) {
-            const navList = document.getElementById('sidebarNavList');
-            if (!navList) return;
+        // ================= RBAC DOMAIN PERMISSIONS ENGINE =================
+        function hasDomainPermission(domain, action = 'edit') {
             const role = currentUser ? currentUser.role : 'Admin';
-            const items = getNavItemsForRole(role);
+            if (role === 'Admin') return true; // SuperAdmin has unrestricted CRUD across all domains
 
-            // If current tab is restricted for this persona, redirect to dashboard
-            const exists = items.some(item => item.id === activeTabId);
-            if (!exists) {
-                activeTabId = 'dashboard';
+            switch (role) {
+                case 'Project Manager':
+                    if (['projects', 'tasks', 'resources', 'forms'].includes(domain)) return true;
+                    return false;
+                case 'Site Engineer':
+                    if (['tasks', 'materials', 'resources', 'forms'].includes(domain)) return true;
+                    return false;
+                case 'Accountant':
+                    if (['finance', 'contractors', 'forms', 'reports'].includes(domain)) return true;
+                    return false;
+                case 'Site Supervisor':
+                    if (['tasks', 'forms'].includes(domain)) {
+                        if (action === 'delete') return false; // Supervisor can update tasks/logs, not delete
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
             }
-            currentTab = activeTabId;
+        }
 
-            navList.innerHTML = '';
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.className = `nav-item ${item.id === activeTabId ? 'active' : ''}`;
-                li.onclick = () => switchTab(item.id, li);
-                li.innerHTML = `
-                    <a href="javascript:void(0)">
-                        <i class="fa-solid ${item.icon}"></i> ${item.label}
-                    </a>
-                `;
-                navList.appendChild(li);
+        function checkDomainAccess(domain, action = 'edit') {
+            if (hasDomainPermission(domain, action)) return true;
+            const role = currentUser ? currentUser.role : 'Guest';
+            showToast(`Access Restricted: ${role} role cannot ${action} records in the ${domain.toUpperCase()} domain. Required: Admin or domain owner.`, 'warning');
+            return false;
+        }
+
+        function getRoleDomainName(role) {
+            switch(role) {
+                case 'Admin': return 'Full System Governance (All Records Editable)';
+                case 'Project Manager': return 'Projects, Tasks & Resource Operations';
+                case 'Site Engineer': return 'Field Tasks, Materials & Site Quality';
+                case 'Accountant': return 'Finance, Budgets, Ledger & Contractors';
+                case 'Site Supervisor': return 'Task Execution, Attendance & Site Logs';
+                default: return 'General Viewer';
+            }
+        }
+
+        function updateDomainBadges() {
+            const role = currentUser ? currentUser.role : 'Admin';
+            const pill = document.getElementById('navDomainAccessPill');
+            if (pill) {
+                pill.innerText = `Domain: ${role}`;
+                pill.className = `badge ${currentUser ? currentUser.badge : 'badge-info'}`;
+            }
+
+            // Projects View Domain Badge
+            const pb = document.getElementById('projectsDomainBadge');
+            if (pb) {
+                if (role === 'Admin') {
+                    pb.className = 'badge badge-info';
+                    pb.innerHTML = '<i class="fa-solid fa-lock-open"></i> Admin Full Access (All Projects Editable)';
+                } else if (role === 'Project Manager') {
+                    pb.className = 'badge badge-success';
+                    pb.innerHTML = '<i class="fa-solid fa-user-check"></i> Project Manager Domain (Add/Edit Allowed)';
+                } else {
+                    pb.className = 'badge badge-warning';
+                    pb.innerHTML = `<i class="fa-solid fa-lock"></i> ${role} Domain (View Only)`;
+                }
+            }
+
+            // Tasks View Domain Badge
+            const tb = document.getElementById('tasksDomainBadge');
+            if (tb) {
+                if (role === 'Admin' || role === 'Project Manager' || role === 'Site Engineer' || role === 'Site Supervisor') {
+                    tb.className = 'badge badge-success';
+                    tb.innerHTML = `<i class="fa-solid fa-check"></i> ${role} Domain (Tasks Editable)`;
+                } else {
+                    tb.className = 'badge badge-warning';
+                    tb.innerHTML = `<i class="fa-solid fa-lock"></i> ${role} (View Only)`;
+                }
+            }
+
+            // Materials View Domain Badge
+            const mb = document.getElementById('materialsDomainBadge');
+            if (mb) {
+                if (role === 'Admin' || role === 'Site Engineer') {
+                    mb.className = 'badge badge-success';
+                    mb.innerHTML = `<i class="fa-solid fa-check"></i> ${role} Domain (Inventory Editable)`;
+                } else {
+                    mb.className = 'badge badge-warning';
+                    mb.innerHTML = `<i class="fa-solid fa-lock"></i> ${role} (View Only)`;
+                }
+            }
+
+            // Finance View Domain Badge
+            const fb = document.getElementById('financeDomainBadge');
+            if (fb) {
+                if (role === 'Admin' || role === 'Accountant') {
+                    fb.className = 'badge badge-success';
+                    fb.innerHTML = `<i class="fa-solid fa-check"></i> ${role} Domain (Ledger Editable)`;
+                } else {
+                    fb.className = 'badge badge-warning';
+                    fb.innerHTML = `<i class="fa-solid fa-lock"></i> ${role} (View Only)`;
+                }
+            }
+        }
+
+        // ================= DYNAMIC DROPDOWNS POPULATION =================
+        function populateProjectSelects() {
+            const selectIds = [
+                'expProject', 'matProject', 'tProject', 'rProject',
+                'editTaskProject', 'editMatProject', 'editExpProject', 'editResProject'
+            ];
+            selectIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const currentVal = el.value;
+                el.innerHTML = '';
+                projectsData.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.name;
+                    opt.innerText = p.name;
+                    el.appendChild(opt);
+                });
+                if (currentVal && projectsData.some(p => p.name === currentVal)) {
+                    el.value = currentVal;
+                }
             });
 
-            // Activate content section
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            const target = document.getElementById('view-' + activeTabId);
-            if (target) target.classList.add('active');
-        }
-
-        function switchTab(viewName, element) {
-            currentTab = viewName;
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
-            const target = document.getElementById('view-' + viewName);
-            if (target) target.classList.add('active');
-            if (element) {
-                element.classList.add('active');
-            } else {
-                const navLinks = document.querySelectorAll('#sidebarNavList .nav-item');
-                navLinks.forEach(item => {
-                    if (item.innerText.toLowerCase().includes(viewName.toLowerCase())) {
-                        item.classList.add('active');
-                    }
+            // Filter in Forms view
+            const formFilter = document.getElementById('formProjectFilter');
+            if (formFilter) {
+                const curVal = formFilter.value;
+                formFilter.innerHTML = `<option value="">All Projects (${projectsData.length})</option>`;
+                projectsData.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = String(p.id);
+                    opt.innerText = `${p.id}: ${p.name.substring(0, 18)}`;
+                    formFilter.appendChild(opt);
                 });
+                formFilter.value = curVal;
             }
         }
 
-        function switchTabByName(viewName) {
-            switchTab(viewName);
-            renderSidebarNav(viewName);
+        // ================= REFRESH ALL VIEWS & TELEMETRY =================
+        function refreshAllViews() {
+            populateProjectSelects();
+            renderProjects();
+            renderExpenses();
+            renderMaterials();
+            renderTasks();
+            renderResources();
+            renderUsers();
+            renderReports();
+            updateDashboardKPIs();
+            updateDomainBadges();
+            updateCharts();
+            updateDbManagerStats();
         }
 
-        // Render Projects Grid
+        // ================= DASHBOARD TELEMETRY & KPIS =================
+        function updateDashboardKPIs() {
+            const activeProjects = projectsData.filter(p => p.status !== 'Completed').length;
+            const completedProjects = projectsData.filter(p => p.status === 'Completed').length;
+            const totalBudget = projectsData.reduce((acc, p) => acc + (Number(p.budget) || 0), 0);
+            const totalSpent = projectsData.reduce((acc, p) => acc + (Number(p.spent) || 0), 0);
+            const lowStockCount = materialsData.filter(m => m.qty <= 10).length;
+            const completedTasks = tasksData.filter(t => t.status === 'Completed').length;
+
+            const actEl = document.getElementById('kpiActiveProjects');
+            const compEl = document.getElementById('kpiCompletedProjects');
+            const budEl = document.getElementById('kpiApprovedBudget');
+            const spEl = document.getElementById('kpiTotalSpent');
+            const tTotEl = document.getElementById('kpiTotalTasks');
+            const tCompEl = document.getElementById('kpiCompletedTasks');
+            const lsEl = document.getElementById('kpiLowStockAlerts');
+
+            if (actEl) actEl.innerText = `${activeProjects} / ${projectsData.length}`;
+            if (compEl) compEl.innerText = `${completedProjects} Completed sites`;
+            if (budEl) budEl.innerText = formatINRRound(totalBudget);
+            if (spEl) spEl.innerText = `Spent: ${formatINRRound(totalSpent)}`;
+            if (tTotEl) tTotEl.innerText = `${tasksData.length} Tasks`;
+            if (tCompEl) tCompEl.innerText = `${completedTasks} Completed milestones`;
+            if (lsEl) lsEl.innerText = `${lowStockCount} Alerts`;
+
+            // Finance View KPIs
+            const finBud = document.getElementById('finTotalApproved');
+            const finExp = document.getElementById('finTotalExpenses');
+            const finRem = document.getElementById('finRemainingVariance');
+            const finPct = document.getElementById('finVariancePercent');
+
+            if (finBud) finBud.innerText = formatINR(totalBudget);
+            if (finExp) finExp.innerText = formatINR(totalSpent);
+            if (finRem) finRem.innerText = formatINR(totalBudget - totalSpent);
+            if (finPct) {
+                const pct = totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0;
+                finPct.innerText = `${pct}% capital deployed`;
+            }
+
+            // Materials Valuation
+            const matVal = document.getElementById('matTotalValuation');
+            if (matVal) {
+                const totalMatCost = materialsData.reduce((acc, m) => acc + (m.qty * m.cost), 0);
+                matVal.innerText = formatINR(totalMatCost);
+            }
+        }
+
+        // ================= PROJECTS VIEW CRUD =================
         function renderProjects() {
             const container = document.getElementById('projectsContainer');
+            if (!container) return;
             container.innerHTML = '';
+
             projectsData.forEach(p => {
-                const statusBadge = p.status === 'Completed' ? 'badge-success' : p.status === 'In-Progress' ? 'badge-info' : 'badge-warning';
+                const statusBadge = p.status === 'Completed' ? 'badge-success' : p.status === 'In-Progress' ? 'badge-info' : p.status === 'On-Hold' ? 'badge-danger' : 'badge-warning';
                 const card = document.createElement('div');
                 card.className = 'glass-card';
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                        <h3 style="font-size: 1.15rem; font-weight: 700;">${p.name}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; gap: 0.5rem;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-secondary); font-weight: 700;">#${p.id || p.code || 'PRJ'}</span>
+                                <h3 style="font-size: 1.15rem; font-weight: 700;">${p.name}</h3>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${p.startDate || '2025-01-01'} to ${p.endDate || '2027-12-31'}</span>
+                        </div>
                         <span class="badge ${statusBadge}">${p.status}</span>
                     </div>
-                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                        <i class="fa-solid fa-user-tie" style="color: var(--accent-primary);"></i> Manager: ${p.manager}<br>
-                        <i class="fa-solid fa-helmet-safety" style="color: var(--warning);"></i> Contractor: ${p.contractor}
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.75rem; min-height: 2.2rem; line-height: 1.4;">
+                        ${p.desc || 'Civil structural scope under active multi-phase execution.'}
                     </p>
+                    <div style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <div><i class="fa-solid fa-user-tie" style="color: var(--accent-primary); width: 18px;"></i> <strong>Manager:</strong> ${p.manager}</div>
+                        <div><i class="fa-solid fa-helmet-safety" style="color: var(--warning); width: 18px;"></i> <strong>Contractor:</strong> ${p.contractor}</div>
+                    </div>
                     <div style="margin-bottom: 1rem;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.35rem;">
                             <span>Completion</span>
-                            <span style="color: var(--accent-secondary);">${p.completion}%</span>
+                            <span style="color: var(--accent-secondary);">${p.completion || 0}%</span>
                         </div>
                         <div class="progress-bar-bg">
-                            <div class="progress-fill" style="width: ${p.completion}%;"></div>
+                            <div class="progress-fill" style="width: ${p.completion || 0}%;"></div>
                         </div>
                     </div>
-                    <div style="padding: 0.75rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.8125rem;">
+                    <div style="padding: 0.75rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 1rem;">
                         <div>
                             <span style="color: var(--text-muted); font-size: 0.75rem;">Budget:</span><br>
                             <strong>${formatINRRound(p.budget)}</strong>
@@ -1958,8 +2580,21 @@
                             <strong style="color: var(--success);">${formatINRRound(p.spent)}</strong>
                         </div>
                         <div>
-                            <span style="color: var(--text-muted); font-size: 0.75rem;">Forms:</span><br>
-                            <strong style="color: var(--accent-secondary);">${p.forms}</strong>
+                            <span style="color: var(--text-muted); font-size: 0.75rem;">Variance:</span><br>
+                            <strong style="color: ${(p.budget - p.spent) >= 0 ? 'var(--info)' : 'var(--danger)'};">${formatINRRound(p.budget - p.spent)}</strong>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-clipboard-check"></i> ${p.forms || 0} Forms Logged
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="handleEditProjectClick(${p.id})" title="Edit Project Details">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteProjectClick(${p.id})" title="Delete Project">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1967,38 +2602,256 @@
             });
         }
 
-        // Render Expense Ledger
-        function renderExpenses() {
-            const tbody = document.getElementById('expenseLedgerBody');
+        function handleCreateProject(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('projects', 'create')) return;
+
+            const newId = projectsData.length > 0 ? Math.max(...projectsData.map(p => Number(p.id) || 0)) + 1 : 1350;
+            const approvedBudget = parseFloat(document.getElementById('pApprovedBudget').value) || 20000000;
+            const newProj = {
+                id: newId,
+                code: 'PRJ-' + String(newId).slice(-2),
+                name: document.getElementById('pName').value.trim(),
+                desc: document.getElementById('pDesc').value.trim() || 'Civil structural scope under active execution.',
+                startDate: document.getElementById('pStart').value || '2026-10-10',
+                endDate: document.getElementById('pEnd').value || '2027-04-10',
+                status: document.getElementById('pStatus').value,
+                manager: document.getElementById('pManager').value,
+                contractor: document.getElementById('pContractor').value || "Larsen & Toubro ECC",
+                budget: approvedBudget,
+                spent: 0,
+                completion: 0,
+                forms: 0
+            };
+
+            projectsData.unshift(newProj);
+            saveProjects();
+            DB.log(`INSERT INTO projects (id, name, status, budget, manager) VALUES (${newId}, '${newProj.name}', '${newProj.status}', ${newProj.budget}, '${newProj.manager}');`);
+
+            refreshAllViews();
+            closeModal('newProjectModal');
+            document.getElementById('newProjectForm').reset();
+            showToast(`Project "${newProj.name}" created and saved to database!`, 'success');
+        }
+
+        function handleEditProjectClick(id) {
+            if (!checkDomainAccess('projects', 'edit')) return;
+            openEditProjectModal(id);
+        }
+
+        function openEditProjectModal(id) {
+            const p = projectsData.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('editProjId').value = p.id;
+            document.getElementById('editProjName').value = p.name;
+            document.getElementById('editProjDesc').value = p.desc || '';
+            document.getElementById('editProjStart').value = p.startDate || '2025-01-01';
+            document.getElementById('editProjEnd').value = p.endDate || '2027-12-31';
+            document.getElementById('editProjStatus').value = p.status || 'Planned';
+            document.getElementById('editProjCompletion').value = p.completion || 0;
+            document.getElementById('editProjManager').value = p.manager;
+            document.getElementById('editProjContractor').value = p.contractor;
+            document.getElementById('editProjBudget').value = p.budget;
+            document.getElementById('editProjSpent').value = p.spent;
+
+            const modal = document.getElementById('editProjectModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function handleSaveEditProject(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('projects', 'edit')) return;
+
+            const id = Number(document.getElementById('editProjId').value);
+            const idx = projectsData.findIndex(p => p.id === id);
+            if (idx === -1) return;
+
+            projectsData[idx].name = document.getElementById('editProjName').value.trim();
+            projectsData[idx].desc = document.getElementById('editProjDesc').value.trim();
+            projectsData[idx].startDate = document.getElementById('editProjStart').value;
+            projectsData[idx].endDate = document.getElementById('editProjEnd').value;
+            projectsData[idx].status = document.getElementById('editProjStatus').value;
+            projectsData[idx].completion = Math.min(100, Math.max(0, parseInt(document.getElementById('editProjCompletion').value) || 0));
+            projectsData[idx].manager = document.getElementById('editProjManager').value;
+            projectsData[idx].contractor = document.getElementById('editProjContractor').value;
+            projectsData[idx].budget = parseFloat(document.getElementById('editProjBudget').value) || 0;
+            projectsData[idx].spent = parseFloat(document.getElementById('editProjSpent').value) || 0;
+
+            saveProjects();
+            DB.log(`UPDATE projects SET name='${projectsData[idx].name}', status='${projectsData[idx].status}', completion=${projectsData[idx].completion}, budget=${projectsData[idx].budget} WHERE id=${id};`);
+
+            refreshAllViews();
+            closeModal('editProjectModal');
+            showToast(`Project "${projectsData[idx].name}" updated successfully!`, 'success');
+        }
+
+        function handleDeleteProjectClick(id) {
+            if (!checkDomainAccess('projects', 'delete')) return;
+            const proj = projectsData.find(p => p.id === id);
+            if (!proj) return;
+
+            if (confirm(`Are you sure you want to delete project "${proj.name}"? This action will permanently remove it from the database.`)) {
+                projectsData = projectsData.filter(p => p.id !== id);
+                saveProjects();
+                DB.log(`DELETE FROM projects WHERE id = ${id}; -- Executed by ${currentUser.role}`);
+                refreshAllViews();
+                showToast(`Project "${proj.name}" deleted from database.`, 'danger');
+            }
+        }
+
+        // ================= TASKS VIEW CRUD =================
+        function renderTasks(items = tasksData) {
+            const tbody = document.getElementById('tasksTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
-            expensesData.forEach((e, idx) => {
+
+            let completed = 0, inProg = 0, open = 0;
+            tasksData.forEach(t => {
+                if (t.status === 'Completed') completed++;
+                else if (t.status === 'In-Progress') inProg++;
+                else open++;
+            });
+            const totEl = document.getElementById('taskTotalCount');
+            const compEl = document.getElementById('taskCompletedCount');
+            const progEl = document.getElementById('taskInProgressCount');
+            const opEl = document.getElementById('taskOpenCount');
+            if (totEl) totEl.innerText = tasksData.length;
+            if (compEl) compEl.innerText = completed;
+            if (progEl) progEl.innerText = inProg;
+            if (opEl) opEl.innerText = open;
+
+            items.forEach((t) => {
+                const badge = t.status === 'Completed' ? 'badge-success' : t.status === 'In-Progress' ? 'badge-info' : t.status === 'Review' ? 'badge-danger' : 'badge-warning';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${e.date}</td>
-                    <td style="font-weight: 600;">${e.project}</td>
-                    <td><span class="badge badge-info">${e.category}</span></td>
-                    <td style="font-weight: 700; color: var(--success);">${formatINR(e.amount)}</td>
-                    <td style="color: var(--text-secondary);">${e.desc}</td>
+                    <td style="font-weight: 600;">${t.name}</td>
+                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${t.project}</td>
+                    <td><i class="fa-solid fa-user-check" style="color: var(--text-muted); margin-right: 0.35rem;"></i>${t.assigned}</td>
+                    <td style="font-size: 0.8125rem;">${t.start}</td>
+                    <td style="font-size: 0.8125rem; font-weight: 600;">${t.due}</td>
+                    <td><span class="badge ${badge}">${t.status}</span></td>
                     <td>
-                        <button class="btn btn-danger btn-sm" onclick="deleteExpense(${idx})"><i class="fa-solid fa-trash"></i></button>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="toggleTaskStatus(${t.id})" title="Toggle Complete"><i class="fa-solid fa-check"></i></button>
+                            <button class="btn btn-secondary btn-sm" onclick="openEditTaskModal(${t.id})" title="Edit Task"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteTaskClick(${t.id})" title="Delete Task"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function deleteExpense(index) {
-            if (confirm("Delete this verified expense transaction?")) {
-                expensesData.splice(index, 1);
-                renderExpenses();
+        function filterTasks() {
+            const q = (document.getElementById('taskSearch')?.value || '').toLowerCase();
+            const status = document.getElementById('taskStatusFilter')?.value || '';
+            const filtered = tasksData.filter(t => {
+                const matchQ = t.name.toLowerCase().includes(q) || t.assigned.toLowerCase().includes(q) || t.project.toLowerCase().includes(q);
+                const matchS = !status || t.status === status;
+                return matchQ && matchS;
+            });
+            renderTasks(filtered);
+        }
+
+        function toggleTaskStatus(id) {
+            if (!checkDomainAccess('tasks', 'edit')) return;
+            const t = tasksData.find(item => item.id === id);
+            if (!t) return;
+            t.status = t.status === 'Completed' ? 'In-Progress' : 'Completed';
+            saveTasks();
+            DB.log(`UPDATE tasks SET status='${t.status}' WHERE id=${id};`);
+            refreshAllViews();
+            showToast(`Task status updated to ${t.status}`, 'info');
+        }
+
+        function handleCreateTask(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('tasks', 'create')) return;
+
+            const newId = tasksData.length > 0 ? Math.max(...tasksData.map(t => Number(t.id) || 0)) + 1 : 1;
+            const newTask = {
+                id: newId,
+                name: document.getElementById('tName').value.trim(),
+                project: document.getElementById('tProject').value,
+                assigned: document.getElementById('tAssigned').value,
+                start: document.getElementById('tStart').value,
+                due: document.getElementById('tDue').value,
+                status: document.getElementById('tStatus').value
+            };
+            tasksData.unshift(newTask);
+            saveTasks();
+            DB.log(`INSERT INTO tasks (id, name, project, status) VALUES (${newId}, '${newTask.name}', '${newTask.project}', '${newTask.status}');`);
+
+            refreshAllViews();
+            closeModal('newTaskModal');
+            document.getElementById('newTaskForm').reset();
+            showToast(`Task "${newTask.name}" created successfully!`, 'success');
+        }
+
+        function openEditTaskModal(id) {
+            if (!checkDomainAccess('tasks', 'edit')) return;
+            const t = tasksData.find(item => item.id === id);
+            if (!t) return;
+
+            document.getElementById('editTaskId').value = t.id;
+            document.getElementById('editTaskName').value = t.name;
+            document.getElementById('editTaskProject').value = t.project;
+            document.getElementById('editTaskAssigned').value = t.assigned;
+            document.getElementById('editTaskStatus').value = t.status;
+            document.getElementById('editTaskStart').value = t.start;
+            document.getElementById('editTaskDue').value = t.due;
+
+            const modal = document.getElementById('editTaskModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
             }
         }
 
-        // Render Materials Table
+        function handleSaveEditTask(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('tasks', 'edit')) return;
+
+            const id = Number(document.getElementById('editTaskId').value);
+            const t = tasksData.find(item => item.id === id);
+            if (!t) return;
+
+            t.name = document.getElementById('editTaskName').value.trim();
+            t.project = document.getElementById('editTaskProject').value;
+            t.assigned = document.getElementById('editTaskAssigned').value;
+            t.status = document.getElementById('editTaskStatus').value;
+            t.start = document.getElementById('editTaskStart').value;
+            t.due = document.getElementById('editTaskDue').value;
+
+            saveTasks();
+            DB.log(`UPDATE tasks SET name='${t.name}', status='${t.status}' WHERE id=${id};`);
+            refreshAllViews();
+            closeModal('editTaskModal');
+            showToast(`Task "${t.name}" updated!`, 'success');
+        }
+
+        function handleDeleteTaskClick(id) {
+            if (!checkDomainAccess('tasks', 'delete')) return;
+            if (confirm("Permanently delete this site task?")) {
+                tasksData = tasksData.filter(t => t.id !== id);
+                saveTasks();
+                DB.log(`DELETE FROM tasks WHERE id = ${id};`);
+                refreshAllViews();
+                showToast("Task deleted", "danger");
+            }
+        }
+
+        // ================= MATERIALS VIEW CRUD =================
         function renderMaterials() {
             const tbody = document.getElementById('materialsTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
-            materialsData.forEach(m => {
+
+            materialsData.forEach((m) => {
                 const isLow = m.qty <= 10;
                 const totalCost = m.qty * m.cost;
                 const tr = document.createElement('tr');
@@ -2011,14 +2864,433 @@
                     <td>
                         ${isLow ? '<span class="badge badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock</span>' : '<span class="badge badge-success">In Stock</span>'}
                     </td>
+                    <td>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="handleQuickAdjustMaterial(${m.id}, 10)" title="Quick Add +10 Stock">+10</button>
+                            <button class="btn btn-secondary btn-sm" onclick="openEditMaterialModal(${m.id})" title="Edit Material"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteMaterialClick(${m.id})" title="Delete Material"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Render Site Forms Table
-        function renderForms(list) {
+        function handleCreateMaterial(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('materials', 'create')) return;
+
+            const newId = materialsData.length > 0 ? Math.max(...materialsData.map(m => Number(m.id) || 0)) + 1 : 1;
+            const newMat = {
+                id: newId,
+                name: document.getElementById('matName').value.trim(),
+                project: document.getElementById('matProject').value,
+                qty: parseFloat(document.getElementById('matQty').value) || 0,
+                unit: document.getElementById('matUnit').value,
+                cost: parseFloat(document.getElementById('matCost').value) || 0
+            };
+            materialsData.unshift(newMat);
+            saveMaterials();
+            DB.log(`INSERT INTO materials (id, name, qty, cost) VALUES (${newId}, '${newMat.name}', ${newMat.qty}, ${newMat.cost});`);
+
+            refreshAllViews();
+            closeModal('newMaterialModal');
+            document.getElementById('newMaterialForm').reset();
+            showToast(`Material "${newMat.name}" added with Total Valuation of ${formatINR(newMat.qty * newMat.cost)}!`, 'success');
+        }
+
+        function openEditMaterialModal(id) {
+            if (!checkDomainAccess('materials', 'edit')) return;
+            const m = materialsData.find(item => item.id === id);
+            if (!m) return;
+
+            document.getElementById('editMatId').value = m.id;
+            document.getElementById('editMatName').value = m.name;
+            document.getElementById('editMatProject').value = m.project;
+            document.getElementById('editMatQty').value = m.qty;
+            document.getElementById('editMatUnit').value = m.unit;
+            document.getElementById('editMatCost').value = m.cost;
+
+            const modal = document.getElementById('editMaterialModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function handleSaveEditMaterial(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('materials', 'edit')) return;
+
+            const id = Number(document.getElementById('editMatId').value);
+            const m = materialsData.find(item => item.id === id);
+            if (!m) return;
+
+            m.name = document.getElementById('editMatName').value.trim();
+            m.project = document.getElementById('editMatProject').value;
+            m.qty = parseFloat(document.getElementById('editMatQty').value) || 0;
+            m.unit = document.getElementById('editMatUnit').value;
+            m.cost = parseFloat(document.getElementById('editMatCost').value) || 0;
+
+            saveMaterials();
+            DB.log(`UPDATE materials SET name='${m.name}', qty=${m.qty}, cost=${m.cost} WHERE id=${id};`);
+            refreshAllViews();
+            closeModal('editMaterialModal');
+            showToast(`Material "${m.name}" updated!`, 'success');
+        }
+
+        function handleQuickAdjustMaterial(id, delta) {
+            if (!checkDomainAccess('materials', 'edit')) return;
+            const m = materialsData.find(item => item.id === id);
+            if (!m) return;
+            m.qty = Math.max(0, m.qty + delta);
+            saveMaterials();
+            DB.log(`UPDATE materials SET qty=${m.qty} WHERE id=${id};`);
+            refreshAllViews();
+            showToast(`Adjusted stock of ${m.name}: ${m.qty} ${m.unit}`, 'info');
+        }
+
+        function handleDeleteMaterialClick(id) {
+            if (!checkDomainAccess('materials', 'delete')) return;
+            if (confirm("Delete this inventory material requisition?")) {
+                materialsData = materialsData.filter(m => m.id !== id);
+                saveMaterials();
+                DB.log(`DELETE FROM materials WHERE id = ${id};`);
+                refreshAllViews();
+                showToast("Material removed from database", "danger");
+            }
+        }
+
+        // ================= FINANCE & EXPENSES VIEW CRUD =================
+        function renderExpenses() {
+            const tbody = document.getElementById('expenseLedgerBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            expensesData.forEach((e) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${e.date}</td>
+                    <td style="font-weight: 600;">${e.project}</td>
+                    <td><span class="badge badge-info">${e.category}</span></td>
+                    <td style="font-weight: 700; color: var(--success);">${formatINR(e.amount)}</td>
+                    <td style="color: var(--text-secondary);">${e.desc}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditExpenseModal(${e.id})" title="Edit Expense"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteExpenseClick(${e.id})" title="Delete Expense"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleCreateExpense(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('finance', 'create')) return;
+
+            const newId = expensesData.length > 0 ? Math.max(...expensesData.map(item => Number(item.id) || 0)) + 1 : 1;
+            const newExp = {
+                id: newId,
+                date: document.getElementById('expDate').value,
+                project: document.getElementById('expProject').value,
+                category: document.getElementById('expCategory').value,
+                amount: parseFloat(document.getElementById('expAmount').value) || 0,
+                desc: document.getElementById('expDesc').value
+            };
+            expensesData.unshift(newExp);
+            saveExpenses();
+            DB.log(`INSERT INTO expenses (id, date, amount, project) VALUES (${newId}, '${newExp.date}', ${newExp.amount}, '${newExp.project}');`);
+
+            refreshAllViews();
+            closeModal('newExpenseModal');
+            document.getElementById('newExpenseForm').reset();
+            showToast(`Expense of ${formatINR(newExp.amount)} recorded!`, 'success');
+        }
+
+        function openEditExpenseModal(id) {
+            if (!checkDomainAccess('finance', 'edit')) return;
+            const e = expensesData.find(item => item.id === id);
+            if (!e) return;
+
+            document.getElementById('editExpId').value = e.id;
+            document.getElementById('editExpProject').value = e.project;
+            document.getElementById('editExpCategory').value = e.category;
+            document.getElementById('editExpAmount').value = e.amount;
+            document.getElementById('editExpDate').value = e.date;
+            document.getElementById('editExpDesc').value = e.desc;
+
+            const modal = document.getElementById('editExpenseModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function handleSaveEditExpense(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('finance', 'edit')) return;
+
+            const id = Number(document.getElementById('editExpId').value);
+            const exp = expensesData.find(item => item.id === id);
+            if (!exp) return;
+
+            exp.project = document.getElementById('editExpProject').value;
+            exp.category = document.getElementById('editExpCategory').value;
+            exp.amount = parseFloat(document.getElementById('editExpAmount').value) || 0;
+            exp.date = document.getElementById('editExpDate').value;
+            exp.desc = document.getElementById('editExpDesc').value;
+
+            saveExpenses();
+            DB.log(`UPDATE expenses SET amount=${exp.amount}, category='${exp.category}' WHERE id=${id};`);
+            refreshAllViews();
+            closeModal('editExpenseModal');
+            showToast(`Expense #${id} updated!`, 'success');
+        }
+
+        function handleDeleteExpenseClick(id) {
+            if (!checkDomainAccess('finance', 'delete')) return;
+            if (confirm("Delete this verified expense transaction?")) {
+                expensesData = expensesData.filter(e => e.id !== id);
+                saveExpenses();
+                DB.log(`DELETE FROM expenses WHERE id = ${id};`);
+                refreshAllViews();
+                showToast("Expense record deleted", "danger");
+            }
+        }
+
+        // ================= RESOURCES VIEW CRUD =================
+        function renderResources(items = resourcesData) {
+            const tbody = document.getElementById('resourcesTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            items.forEach((r) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${r.name}</td>
+                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${r.project}</td>
+                    <td><span class="badge badge-info">${r.type}</span></td>
+                    <td style="font-weight: 700;">${r.qty} ${r.unit}</td>
+                    <td><span class="badge ${r.status === 'Active' ? 'badge-success' : 'badge-warning'}">${r.status}</span></td>
+                    <td style="font-size: 0.8125rem; color: var(--text-secondary);">${r.remarks}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditResourceModal(${r.id})" title="Edit Resource"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteResourceClick(${r.id})" title="Deallocate"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterResources() {
+            const q = (document.getElementById('resourceSearch')?.value || '').toLowerCase();
+            const type = document.getElementById('resourceTypeFilter')?.value || '';
+            const filtered = resourcesData.filter(r => {
+                const matchQ = r.name.toLowerCase().includes(q) || r.project.toLowerCase().includes(q) || r.remarks.toLowerCase().includes(q);
+                const matchT = !type || r.type === type;
+                return matchQ && matchT;
+            });
+            renderResources(filtered);
+        }
+
+        function handleCreateResource(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('resources', 'create')) return;
+
+            const newId = resourcesData.length > 0 ? Math.max(...resourcesData.map(r => Number(r.id) || 0)) + 1 : 1;
+            const newRes = {
+                id: newId,
+                name: document.getElementById('rName').value.trim(),
+                project: document.getElementById('rProject').value,
+                type: document.getElementById('rType').value,
+                qty: parseInt(document.getElementById('rQty').value) || 1,
+                unit: document.getElementById('rUnit').value,
+                status: "Active",
+                remarks: document.getElementById('rRemarks').value || 'Site deployment'
+            };
+            resourcesData.unshift(newRes);
+            saveResources();
+            DB.log(`INSERT INTO resources (id, name, qty, project) VALUES (${newId}, '${newRes.name}', ${newRes.qty}, '${newRes.project}');`);
+
+            refreshAllViews();
+            closeModal('newResourceModal');
+            document.getElementById('newResourceForm').reset();
+            showToast(`Resource "${newRes.name}" allocated!`, 'success');
+        }
+
+        function openEditResourceModal(id) {
+            if (!checkDomainAccess('resources', 'edit')) return;
+            const r = resourcesData.find(item => item.id === id);
+            if (!r) return;
+
+            document.getElementById('editResId').value = r.id;
+            document.getElementById('editResName').value = r.name;
+            document.getElementById('editResProject').value = r.project;
+            document.getElementById('editResType').value = r.type;
+            document.getElementById('editResQty').value = r.qty;
+            document.getElementById('editResStatus').value = r.status;
+            document.getElementById('editResRemarks').value = r.remarks || '';
+
+            const modal = document.getElementById('editResourceModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function handleSaveEditResource(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('resources', 'edit')) return;
+
+            const id = Number(document.getElementById('editResId').value);
+            const r = resourcesData.find(item => item.id === id);
+            if (!r) return;
+
+            r.name = document.getElementById('editResName').value.trim();
+            r.project = document.getElementById('editResProject').value;
+            r.type = document.getElementById('editResType').value;
+            r.qty = parseInt(document.getElementById('editResQty').value) || 1;
+            r.status = document.getElementById('editResStatus').value;
+            r.remarks = document.getElementById('editResRemarks').value;
+
+            saveResources();
+            DB.log(`UPDATE resources SET name='${r.name}', status='${r.status}' WHERE id=${id};`);
+            refreshAllViews();
+            closeModal('editResourceModal');
+            showToast(`Resource "${r.name}" updated!`, 'success');
+        }
+
+        function handleDeleteResourceClick(id) {
+            if (!checkDomainAccess('resources', 'delete')) return;
+            if (confirm("Deallocate this resource item?")) {
+                resourcesData = resourcesData.filter(r => r.id !== id);
+                saveResources();
+                DB.log(`DELETE FROM resources WHERE id = ${id};`);
+                refreshAllViews();
+                showToast("Resource deallocated", "danger");
+            }
+        }
+
+        // ================= USERS GOVERNANCE CRUD (ADMIN ONLY) =================
+        function renderUsers(items = usersData) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            items.forEach((u) => {
+                const badge = u.role === 'Admin' ? 'badge-info' : u.role === 'Project Manager' ? 'badge-success' : u.role === 'Site Engineer' ? 'badge-warning' : u.role === 'Accountant' ? 'badge-info' : 'badge-danger';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 700;">${u.name}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent-secondary);">${u.username}</td>
+                    <td style="font-size: 0.8125rem;">${u.email}</td>
+                    <td><span class="badge ${badge}">${u.role}</span></td>
+                    <td><span class="badge ${u.status === 'Active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+                    <td style="font-size: 0.8125rem; color: var(--text-muted);">${u.desc}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditUserModal(${u.id})" title="Edit Role / Status"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-secondary btn-sm" onclick="switchRole(DEMO_ACCOUNTS.find(a => a.username === '${u.username}') || DEMO_ACCOUNTS[0])" title="Impersonate"><i class="fa-solid fa-right-to-bracket"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="handleDeleteUserClick(${u.id})" title="Delete User"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('users', 'create')) return;
+
+            const newId = usersData.length > 0 ? Math.max(...usersData.map(u => Number(u.id) || 0)) + 1 : 1;
+            const newUser = {
+                id: newId,
+                name: document.getElementById('uFullName').value.trim(),
+                username: document.getElementById('uUsername').value.trim().toLowerCase(),
+                email: document.getElementById('uEmail').value.trim(),
+                role: document.getElementById('uRole').value,
+                status: 'Active',
+                desc: `${document.getElementById('uRole').value} Specialist`
+            };
+            usersData.push(newUser);
+            saveUsers();
+            DB.log(`INSERT INTO users (id, username, role, email) VALUES (${newId}, '${newUser.username}', '${newUser.role}', '${newUser.email}');`);
+
+            refreshAllViews();
+            closeModal('newUserModal');
+            document.getElementById('newUserForm').reset();
+            showToast(`User account "${newUser.username}" created!`, 'success');
+        }
+
+        function openEditUserModal(id) {
+            if (!checkDomainAccess('users', 'edit')) return;
+            const u = usersData.find(item => item.id === id);
+            if (!u) return;
+
+            document.getElementById('editUserId').value = u.id;
+            document.getElementById('editUserName').value = u.name;
+            document.getElementById('editUserUsername').value = u.username;
+            document.getElementById('editUserEmail').value = u.email;
+            document.getElementById('editUserRole').value = u.role;
+            document.getElementById('editUserStatus').value = u.status;
+            document.getElementById('editUserDesc').value = u.desc;
+
+            const modal = document.getElementById('editUserModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function handleSaveEditUser(e) {
+            e.preventDefault();
+            if (!checkDomainAccess('users', 'edit')) return;
+
+            const id = Number(document.getElementById('editUserId').value);
+            const u = usersData.find(item => item.id === id);
+            if (!u) return;
+
+            u.name = document.getElementById('editUserName').value.trim();
+            u.email = document.getElementById('editUserEmail').value.trim();
+            u.role = document.getElementById('editUserRole').value;
+            u.status = document.getElementById('editUserStatus').value;
+            u.desc = document.getElementById('editUserDesc').value.trim();
+
+            saveUsers();
+            DB.log(`UPDATE users SET role='${u.role}', status='${u.status}' WHERE id=${id};`);
+            refreshAllViews();
+            closeModal('editUserModal');
+            showToast(`User account "${u.username}" updated!`, 'success');
+        }
+
+        function handleDeleteUserClick(id) {
+            if (!checkDomainAccess('users', 'delete')) return;
+            const u = usersData.find(item => item.id === id);
+            if (!u) return;
+
+            if (currentUser && currentUser.username === u.username) {
+                showToast("Cannot delete currently logged-in account.", "warning");
+                return;
+            }
+
+            if (confirm(`Delete platform user account "${u.name}"?`)) {
+                usersData = usersData.filter(item => item.id !== id);
+                saveUsers();
+                DB.log(`DELETE FROM users WHERE id = ${id};`);
+                refreshAllViews();
+                showToast("User account deleted", "danger");
+            }
+        }
+
+        // ================= FORMS & REPORTS VIEW =================
+        function renderForms(list = sampleForms) {
             const tbody = document.getElementById('formsTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             list.forEach(f => {
                 const tr = document.createElement('tr');
@@ -2049,13 +3321,13 @@
             renderForms(filtered);
         }
 
-        // Render Reports Table
         function renderReports() {
             const tbody = document.getElementById('reportsTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             projectsData.forEach(p => {
                 const variance = p.budget - p.spent;
-                const burnRate = ((p.spent / p.budget) * 100).toFixed(1);
+                const burnRate = p.budget > 0 ? ((p.spent / p.budget) * 100).toFixed(1) : 0;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-weight: 600;">${p.name}</td>
@@ -2075,65 +3347,11 @@
             });
         }
 
-        // Form Submit Handlers
-        function handleCreateProject(e) {
-            e.preventDefault();
-            const newProj = {
-                id: 1350 + projectsData.length,
-                name: document.getElementById('pName').value,
-                status: document.getElementById('pStatus').value,
-                manager: document.getElementById('pManager').value,
-                contractor: "Larsen & Toubro ECC",
-                budget: parseFloat(document.getElementById('pApprovedBudget').value) || 20000000,
-                spent: 0,
-                completion: 0,
-                forms: 0
-            };
-            projectsData.unshift(newProj);
-            renderProjects();
-            renderReports();
-            closeModal('newProjectModal');
-            alert(`Project "${newProj.name}" created successfully with Approved Budget of ${formatINR(newProj.budget)}!`);
-        }
-
-        function handleCreateExpense(e) {
-            e.preventDefault();
-            const newExp = {
-                id: expensesData.length + 1,
-                date: document.getElementById('expDate').value,
-                project: document.getElementById('expProject').value,
-                category: document.getElementById('expCategory').value,
-                amount: parseFloat(document.getElementById('expAmount').value) || 0,
-                desc: document.getElementById('expDesc').value
-            };
-            expensesData.unshift(newExp);
-            renderExpenses();
-            closeModal('newExpenseModal');
-            alert(`Expense of ${formatINR(newExp.amount)} recorded on ${newExp.project}!`);
-        }
-
-        function handleCreateMaterial(e) {
-            e.preventDefault();
-            const newMat = {
-                id: materialsData.length + 1,
-                name: document.getElementById('matName').value,
-                project: document.getElementById('matProject').value,
-                qty: parseFloat(document.getElementById('matQty').value) || 0,
-                unit: document.getElementById('matUnit').value,
-                cost: parseFloat(document.getElementById('matCost').value) || 0,
-                isLow: parseFloat(document.getElementById('matQty').value) <= 10
-            };
-            materialsData.unshift(newMat);
-            renderMaterials();
-            closeModal('newMaterialModal');
-            alert(`Material "${newMat.name}" added with Total Valuation of ${formatINR(newMat.qty * newMat.cost)}!`);
-        }
-
-        // CSV Exports
+        // ================= CSV EXPORTS =================
         function exportBudgetCSV() {
-            let csv = "Project Name,Contractor,Approved Budget (INR),Total Spent (INR),Variance (INR)\n";
+            let csv = "Project ID,Project Name,Contractor,Approved Budget (INR),Total Spent (INR),Variance (INR),Completion (%)\n";
             projectsData.forEach(p => {
-                csv += `"${p.name}","${p.contractor}",${p.budget},${p.spent},${p.budget - p.spent}\n`;
+                csv += `"${p.id}","${p.name}","${p.contractor}",${p.budget},${p.spent},${p.budget - p.spent},${p.completion}%\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -2141,6 +3359,7 @@
             a.href = url;
             a.download = `BuildCorp_Budget_Report_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+            showToast("Financial report CSV exported!", "success");
         }
 
         function exportFormsCSV() {
@@ -2154,202 +3373,194 @@
             a.href = url;
             a.download = `BuildCorp_Site_Forms_10k_Extract.csv`;
             a.click();
+            showToast("Site inspection forms CSV exported!", "success");
         }
 
-        // ================= TASKS, RESOURCES & USER GOVERNANCE LOGIC =================
-        function renderTasks(items = tasksData) {
-            const tbody = document.getElementById('tasksTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            let completed = 0, inProg = 0, open = 0;
-            tasksData.forEach(t => {
-                if (t.status === 'Completed') completed++;
-                else if (t.status === 'In-Progress') inProg++;
-                else open++;
-            });
-            const totEl = document.getElementById('taskTotalCount');
-            const compEl = document.getElementById('taskCompletedCount');
-            const progEl = document.getElementById('taskInProgressCount');
-            const opEl = document.getElementById('taskOpenCount');
-            if (totEl) totEl.innerText = tasksData.length;
-            if (compEl) compEl.innerText = completed;
-            if (progEl) progEl.innerText = inProg;
-            if (opEl) opEl.innerText = open;
-
-            items.forEach((t, idx) => {
-                const badge = t.status === 'Completed' ? 'badge-success' : t.status === 'In-Progress' ? 'badge-info' : t.status === 'Review' ? 'badge-danger' : 'badge-warning';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 600;">${t.name}</td>
-                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${t.project}</td>
-                    <td><i class="fa-solid fa-user-check" style="color: var(--text-muted); margin-right: 0.35rem;"></i>${t.assigned}</td>
-                    <td style="font-size: 0.8125rem;">${t.start}</td>
-                    <td style="font-size: 0.8125rem; font-weight: 600;">${t.due}</td>
-                    <td><span class="badge ${badge}">${t.status}</span></td>
-                    <td>
-                        <button class="btn btn-secondary btn-sm" onclick="toggleTaskStatus(${idx})" title="Toggle Status"><i class="fa-solid fa-check"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteTask(${idx})" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function filterTasks() {
-            const q = (document.getElementById('taskSearch')?.value || '').toLowerCase();
-            const status = document.getElementById('taskStatusFilter')?.value || '';
-            const filtered = tasksData.filter(t => {
-                const matchQ = t.name.toLowerCase().includes(q) || t.assigned.toLowerCase().includes(q) || t.project.toLowerCase().includes(q);
-                const matchS = !status || t.status === status;
-                return matchQ && matchS;
-            });
-            renderTasks(filtered);
-        }
-
-        function toggleTaskStatus(idx) {
-            const current = tasksData[idx].status;
-            tasksData[idx].status = current === 'Completed' ? 'In-Progress' : 'Completed';
-            filterTasks();
-            showToast(`Task status updated to ${tasksData[idx].status}`, 'info');
-        }
-
-        function deleteTask(idx) {
-            if (confirm("Delete this site task?")) {
-                tasksData.splice(idx, 1);
-                filterTasks();
-                showToast("Task deleted", "danger");
+        // ================= DATABASE MANAGER & PERSISTENCE TOOLS =================
+        function openDbManagerModal() {
+            updateDbManagerStats();
+            const modal = document.getElementById('dbManagerModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
             }
         }
 
-        function handleCreateTask(e) {
-            e.preventDefault();
-            const newTask = {
-                id: tasksData.length + 1,
-                name: document.getElementById('tName').value,
-                project: document.getElementById('tProject').value,
-                assigned: document.getElementById('tAssigned').value,
-                start: document.getElementById('tStart').value,
-                due: document.getElementById('tDue').value,
-                status: document.getElementById('tStatus').value
-            };
-            tasksData.unshift(newTask);
-            filterTasks();
-            closeModal('newTaskModal');
-            showToast(`Task "${newTask.name}" created successfully!`, 'success');
-        }
+        function updateDbManagerStats() {
+            const pEl = document.getElementById('dbCountProjects');
+            const tEl = document.getElementById('dbCountTasks');
+            const mEl = document.getElementById('dbCountMaterials');
+            const eEl = document.getElementById('dbCountExpenses');
+            if (pEl) pEl.innerText = projectsData.length;
+            if (tEl) tEl.innerText = tasksData.length;
+            if (mEl) mEl.innerText = materialsData.length;
+            if (eEl) eEl.innerText = expensesData.length;
 
-        // Render Resources
-        function renderResources(items = resourcesData) {
-            const tbody = document.getElementById('resourcesTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            items.forEach((r, idx) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 600;">${r.name}</td>
-                    <td style="color: var(--accent-secondary); font-size: 0.8125rem;">${r.project}</td>
-                    <td><span class="badge badge-info">${r.type}</span></td>
-                    <td style="font-weight: 700;">${r.qty} ${r.unit}</td>
-                    <td><span class="badge ${r.status === 'Active' ? 'badge-success' : 'badge-warning'}">${r.status}</span></td>
-                    <td style="font-size: 0.8125rem; color: var(--text-secondary);">${r.remarks}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" onclick="deleteResource(${idx})"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function filterResources() {
-            const q = (document.getElementById('resourceSearch')?.value || '').toLowerCase();
-            const type = document.getElementById('resourceTypeFilter')?.value || '';
-            const filtered = resourcesData.filter(r => {
-                const matchQ = r.name.toLowerCase().includes(q) || r.project.toLowerCase().includes(q) || r.remarks.toLowerCase().includes(q);
-                const matchT = !type || r.type === type;
-                return matchQ && matchT;
-            });
-            renderResources(filtered);
-        }
-
-        function deleteResource(idx) {
-            if (confirm("Deallocate this resource item?")) {
-                resourcesData.splice(idx, 1);
-                filterResources();
-                showToast("Resource deallocated", "danger");
+            const stream = document.getElementById('dbQueryLogStream');
+            if (stream) {
+                const logs = DB.get('logs') || [];
+                if (logs.length === 0) {
+                    stream.innerHTML = `<span style="color: #64748b;">-- No queries logged yet --</span>`;
+                } else {
+                    stream.innerHTML = logs.map(l => `<div><span style="color: #64748b;">[${l.timestamp}]</span> <span style="color: #a5b4fc;">${l.query}</span></div>`).join('');
+                }
             }
         }
 
-        function handleCreateResource(e) {
-            e.preventDefault();
-            const newRes = {
-                id: resourcesData.length + 1,
-                name: document.getElementById('rName').value,
-                project: document.getElementById('rProject').value,
-                type: document.getElementById('rType').value,
-                qty: parseInt(document.getElementById('rQty').value) || 1,
-                unit: document.getElementById('rUnit').value,
-                status: "Active",
-                remarks: document.getElementById('rRemarks').value || 'Site deployment'
+        function exportDatabaseJSON() {
+            const dbPayload = {
+                exportedAt: new Date().toISOString(),
+                version: "2.4-dbms",
+                projects: projectsData,
+                expenses: expensesData,
+                materials: materialsData,
+                tasks: tasksData,
+                resources: resourcesData,
+                users: usersData,
+                forms: sampleForms
             };
-            resourcesData.unshift(newRes);
-            filterResources();
-            closeModal('newResourceModal');
-            showToast(`Resource "${newRes.name}" allocated!`, 'success');
+            const blob = new Blob([JSON.stringify(dbPayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `buildcorp_dbms_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showToast("Database backup JSON exported successfully!", "success");
         }
 
-        // Render Users (Admin Only)
-        function renderUsers(items = usersData) {
-            const tbody = document.getElementById('usersTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            items.forEach((u, idx) => {
-                const badge = u.role === 'Admin' ? 'badge-info' : u.role === 'Project Manager' ? 'badge-success' : u.role === 'Site Engineer' ? 'badge-warning' : u.role === 'Accountant' ? 'badge-info' : 'badge-danger';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 700;">${u.name}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent-secondary);">${u.username}</td>
-                    <td style="font-size: 0.8125rem;">${u.email}</td>
-                    <td><span class="badge ${badge}">${u.role}</span></td>
-                    <td><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> ${u.status}</span></td>
-                    <td style="font-size: 0.8125rem; color: var(--text-muted);">${u.desc}</td>
-                    <td>
-                        <button class="btn btn-secondary btn-sm" onclick="switchRole(DEMO_ACCOUNTS.find(a => a.username === '${u.username}') || DEMO_ACCOUNTS[0])" title="Impersonate"><i class="fa-solid fa-right-to-bracket"></i> Switch</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function handleCreateUser(e) {
-            e.preventDefault();
-            const newUser = {
-                id: usersData.length + 1,
-                name: document.getElementById('uFullName').value,
-                username: document.getElementById('uUsername').value,
-                email: document.getElementById('uEmail').value,
-                role: document.getElementById('uRole').value,
-                status: 'Active',
-                desc: 'Custom Site User'
+        function importDatabaseJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (data.projects && Array.isArray(data.projects)) {
+                        projectsData = data.projects;
+                        saveProjects();
+                    }
+                    if (data.expenses && Array.isArray(data.expenses)) {
+                        expensesData = data.expenses;
+                        saveExpenses();
+                    }
+                    if (data.materials && Array.isArray(data.materials)) {
+                        materialsData = data.materials;
+                        saveMaterials();
+                    }
+                    if (data.tasks && Array.isArray(data.tasks)) {
+                        tasksData = data.tasks;
+                        saveTasks();
+                    }
+                    if (data.resources && Array.isArray(data.resources)) {
+                        resourcesData = data.resources;
+                        saveResources();
+                    }
+                    if (data.users && Array.isArray(data.users)) {
+                        usersData = data.users;
+                        saveUsers();
+                    }
+                    DB.log(`RESTORE: Imported database from backup (${file.name})`);
+                    refreshAllViews();
+                    updateDbManagerStats();
+                    showToast("Database restored successfully from backup!", "success");
+                } catch(err) {
+                    alert("Invalid JSON database file.");
+                }
             };
-            usersData.push(newUser);
-            renderUsers();
-            closeModal('newUserModal');
-            showToast(`User account "${newUser.username}" created!`, 'success');
+            reader.readAsText(file);
         }
 
-        // ================= AUTHENTICATION & RBAC STATE (Matches Localhost) =================
-        const DEMO_ACCOUNTS = [
-            { username: 'alex.vance', email: 'alex.vance@buildcorp.com', role: 'Admin', name: 'Alex Vance', initials: 'AV', badge: 'badge-info', desc: 'System Admin & Governance' },
-            { username: 'sarah.jenkins', email: 'sarah.jenkins@buildcorp.com', role: 'Project Manager', name: 'Sarah Jenkins', initials: 'SJ', badge: 'badge-success', desc: 'Multi-Project Delivery' },
-            { username: 'rajesh.patel', email: 'rajesh.patel@buildcorp.com', role: 'Site Engineer', name: 'Rajesh Patel', initials: 'RP', badge: 'badge-warning', desc: 'Site Operations & QA' },
-            { username: 'elena.rostova', email: 'elena.rostova@buildcorp.com', role: 'Accountant', name: 'Elena Rostova', initials: 'ER', badge: 'badge-info', desc: 'Budgets & Cost Audits' },
-            { username: 'marcus.brody', email: 'marcus.brody@buildcorp.com', role: 'Site Supervisor', name: 'Marcus Brody', initials: 'MB', badge: 'badge-danger', desc: 'Field Tasks & Materials' }
-        ];
+        function resetDatabaseToSeed() {
+            if (confirm("Reset database to factory SRM Demo dataset? Any newly added projects or records will be reset.")) {
+                localStorage.removeItem(DB_STORAGE_KEYS.projects);
+                localStorage.removeItem(DB_STORAGE_KEYS.expenses);
+                localStorage.removeItem(DB_STORAGE_KEYS.materials);
+                localStorage.removeItem(DB_STORAGE_KEYS.tasks);
+                localStorage.removeItem(DB_STORAGE_KEYS.resources);
+                localStorage.removeItem(DB_STORAGE_KEYS.users);
+                localStorage.removeItem(DB_STORAGE_KEYS.forms);
+                loadAllData();
+                refreshAllViews();
+                updateDbManagerStats();
+                showToast("Database reset to factory SRM seed state.", "info");
+            }
+        }
 
-        let currentUser = null;
+        // ================= MODAL CONTROLS =================
+        function openNewProjectModal() {
+            if (!checkDomainAccess('projects', 'create')) return;
+            const modal = document.getElementById('newProjectModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
 
-        // Toast Notification Helper
+        function openNewExpenseModal() {
+            if (!checkDomainAccess('finance', 'create')) return;
+            const modal = document.getElementById('newExpenseModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewMaterialModal() {
+            if (!checkDomainAccess('materials', 'create')) return;
+            const modal = document.getElementById('newMaterialModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewTaskModal() {
+            if (!checkDomainAccess('tasks', 'create')) return;
+            const modal = document.getElementById('newTaskModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewResourceModal() {
+            if (!checkDomainAccess('resources', 'create')) return;
+            const modal = document.getElementById('newResourceModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function openNewUserModal() {
+            if (!checkDomainAccess('users', 'create')) return;
+            const modal = document.getElementById('newUserModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.scrollTop = 0;
+            }
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        }
+
+        function closeModals(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+            }
+        }
+
+        // ================= HELPERS & CURRENCY =================
+        function formatINR(val) {
+            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatINRRound(val) {
+            return '₹' + (Number(val) || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        }
+
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -2367,7 +3578,99 @@
             }, 3200);
         }
 
-        // Render Quick Demo Personas in Login Card
+        // ================= DYNAMIC ROLE-BASED SIDEBAR NAVIGATION =================
+        let currentTab = 'dashboard';
+
+        function getNavItemsForRole(role) {
+            const isAdmin = role === 'Admin';
+            const isAccountant = role === 'Accountant';
+            const isSiteSupervisor = role === 'Site Supervisor';
+
+            return [
+                { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie' },
+                { id: 'projects', label: `Projects (${projectsData.length})`, icon: 'fa-building' },
+                ...(!isAccountant ? [
+                    { id: 'tasks', label: 'Tasks', icon: 'fa-square-check' },
+                    { id: 'materials', label: 'Materials & Stock', icon: 'fa-boxes-stacked' },
+                    { id: 'resources', label: 'Resources & Labor', icon: 'fa-wrench' }
+                ] : []),
+                ...(isAdmin || isAccountant || !isSiteSupervisor ? [
+                    { id: 'finance', label: 'Finance & Budgets', icon: 'fa-indian-rupee-sign' },
+                    { id: 'contractors', label: 'Contractors', icon: 'fa-users-gear' }
+                ] : []),
+                ...(isAdmin ? [
+                    { id: 'users', label: 'User Governance', icon: 'fa-user-shield' }
+                ] : []),
+                { id: 'forms', label: 'Site Forms (10k)', icon: 'fa-clipboard-check' },
+                { id: 'reports', label: 'Reports & Export', icon: 'fa-file-invoice-dollar' }
+            ];
+        }
+
+        function renderSidebarNav(activeTabId = currentTab) {
+            const navList = document.getElementById('sidebarNavList');
+            if (!navList) return;
+            const role = currentUser ? currentUser.role : 'Admin';
+            const items = getNavItemsForRole(role);
+
+            const exists = items.some(item => item.id === activeTabId);
+            if (!exists) {
+                activeTabId = 'dashboard';
+            }
+            currentTab = activeTabId;
+
+            navList.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = `nav-item ${item.id === activeTabId ? 'active' : ''}`;
+                li.onclick = () => switchTab(item.id, li);
+                li.innerHTML = `
+                    <a href="javascript:void(0)">
+                        <i class="fa-solid ${item.icon}"></i> ${item.label}
+                    </a>
+                `;
+                navList.appendChild(li);
+            });
+
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('view-' + activeTabId);
+            if (target) target.classList.add('active');
+        }
+
+        function switchTab(viewName, element) {
+            currentTab = viewName;
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            } else {
+                const navLinks = document.querySelectorAll('#sidebarNavList .nav-item');
+                navLinks.forEach(item => {
+                    if (item.innerText.toLowerCase().includes(viewName.toLowerCase())) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        function switchTabByName(viewName) {
+            switchTab(viewName);
+            renderSidebarNav(viewName);
+        }
+
+        // ================= AUTHENTICATION & PERSONA SWITCHING =================
+        const DEMO_ACCOUNTS = [
+            { username: 'alex.vance', email: 'alex.vance@buildcorp.com', role: 'Admin', name: 'Alex Vance', initials: 'AV', badge: 'badge-info', desc: 'System Admin & Governance' },
+            { username: 'sarah.jenkins', email: 'sarah.jenkins@buildcorp.com', role: 'Project Manager', name: 'Sarah Jenkins', initials: 'SJ', badge: 'badge-success', desc: 'Multi-Project Delivery' },
+            { username: 'rajesh.patel', email: 'rajesh.patel@buildcorp.com', role: 'Site Engineer', name: 'Rajesh Patel', initials: 'RP', badge: 'badge-warning', desc: 'Site Operations & QA' },
+            { username: 'elena.rostova', email: 'elena.rostova@buildcorp.com', role: 'Accountant', name: 'Elena Rostova', initials: 'ER', badge: 'badge-info', desc: 'Budgets & Cost Audits' },
+            { username: 'marcus.brody', email: 'marcus.brody@buildcorp.com', role: 'Site Supervisor', name: 'Marcus Brody', initials: 'MB', badge: 'badge-danger', desc: 'Field Tasks & Materials' }
+        ];
+
+        let currentUser = null;
+
         function renderQuickDemoAccounts() {
             const list = document.getElementById('quickDemoAccountsList');
             if (!list) return;
@@ -2388,7 +3691,6 @@
             });
         }
 
-        // Render Role Switcher Dropdown in Navbar
         function renderRoleDropdownOptions() {
             const list = document.getElementById('roleOptionsList');
             if (!list) return;
@@ -2413,7 +3715,6 @@
             });
         }
 
-        // Toggle Navbar Role Switcher Menu
         function toggleRoleDropdown(e) {
             if (e) e.stopPropagation();
             const menu = document.getElementById('roleDropdownMenu');
@@ -2423,7 +3724,6 @@
             }
         }
 
-        // Close dropdown on click outside
         window.addEventListener('click', (e) => {
             const container = document.getElementById('roleDropdownContainer');
             const menu = document.getElementById('roleDropdownMenu');
@@ -2432,18 +3732,23 @@
             }
         });
 
-        // Switch Role (Updates Sidebar Nav to match Localhost)
         function switchRole(account) {
             currentUser = account;
             localStorage.setItem('buildcorp_user', JSON.stringify(account));
             updateNavbarUser();
+            updateDomainBadges();
             renderSidebarNav(currentTab);
+            renderProjects();
+            renderTasks();
+            renderMaterials();
+            renderExpenses();
+            renderResources();
+            renderUsers();
             const menu = document.getElementById('roleDropdownMenu');
             if (menu) menu.classList.remove('show');
-            showToast(`Role switched to ${account.role} (${account.name})`, 'success');
+            showToast(`Switched to ${account.role} (${account.name}) • Domain: ${getRoleDomainName(account.role)}`, 'success');
         }
 
-        // Quick login via Demo Persona Button
         function handleQuickLogin(account) {
             document.getElementById('loginIdentifier').value = account.username;
             document.getElementById('loginPassword').value = 'Demo@123';
@@ -2462,7 +3767,6 @@
             }, 300);
         }
 
-        // Handle Manual Login Form Submit
         function handleLoginFormSubmit(e) {
             e.preventDefault();
             const idInput = document.getElementById('loginIdentifier').value.trim();
@@ -2476,7 +3780,6 @@
                 return;
             }
 
-            // Find matching account or fallback to custom admin
             let found = DEMO_ACCOUNTS.find(a => 
                 a.username.toLowerCase() === idInput.toLowerCase() || 
                 a.email.toLowerCase() === idInput.toLowerCase()
@@ -2490,7 +3793,7 @@
                     name: idInput.charAt(0).toUpperCase() + idInput.slice(1),
                     initials: idInput.substring(0, 2).toUpperCase(),
                     badge: 'badge-info',
-                    desc: 'Authenticated User'
+                    desc: 'Authenticated Administrator'
                 };
             }
 
@@ -2510,11 +3813,11 @@
             }, 350);
         }
 
-        // Complete Login Procedure
         function completeLogin(account) {
             currentUser = account;
             localStorage.setItem('buildcorp_user', JSON.stringify(account));
             updateNavbarUser();
+            updateDomainBadges();
             renderSidebarNav('dashboard');
 
             const loginView = document.getElementById('loginView');
@@ -2530,7 +3833,6 @@
             showToast(`Welcome back, ${account.name}! Logged in as ${account.role}`, 'success');
         }
 
-        // Sign Out / Logout
         function logout() {
             currentUser = null;
             localStorage.removeItem('buildcorp_user');
@@ -2548,7 +3850,6 @@
             showToast('You have signed out successfully.', 'info');
         }
 
-        // Update Navbar display with current persona
         function updateNavbarUser() {
             if (!currentUser) return;
             const nameEl = document.getElementById('navUserName');
@@ -2560,11 +3861,108 @@
             }
         }
 
-        // Initialize Charts and Tables
+        // ================= CHART.JS TELEMETRY ENGINE =================
+        let budgetBarChartInstance = null;
+        let taskDonutChartInstance = null;
+
+        function initCharts() {
+            const ctxBar = document.getElementById('budgetBarChart')?.getContext('2d');
+            if (ctxBar) {
+                budgetBarChartInstance = new Chart(ctxBar, {
+                    type: 'bar',
+                    data: {
+                        labels: projectsData.slice(0, 6).map(p => p.name.length > 14 ? p.name.substring(0, 12) + '...' : p.name),
+                        datasets: [
+                            {
+                                label: 'Approved Budget (₹ Lakhs)',
+                                data: projectsData.slice(0, 6).map(p => (p.budget / 100000).toFixed(1)),
+                                backgroundColor: '#6366f1',
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Total Spent (₹ Lakhs)',
+                                data: projectsData.slice(0, 6).map(p => (p.spent / 100000).toFixed(1)),
+                                backgroundColor: '#10b981',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
+                            y: {
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    callback: val => '₹' + val + 'L'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 12 } } },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ctx.dataset.label + ': ₹' + ctx.raw + ' Lakhs'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ctxDonut = document.getElementById('taskDonutChart')?.getContext('2d');
+            if (ctxDonut) {
+                const completed = tasksData.filter(t => t.status === 'Completed').length;
+                const inProg = tasksData.filter(t => t.status === 'In-Progress').length;
+                const review = tasksData.filter(t => t.status === 'Review').length;
+                const open = tasksData.filter(t => t.status === 'Open').length;
+
+                taskDonutChartInstance = new Chart(ctxDonut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [`Done (${completed})`, `In-Progress (${inProg})`, `Review (${review})`, `To-Do (${open})`],
+                        datasets: [{
+                            data: [completed, inProg, review, open],
+                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#64748b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateCharts() {
+            if (budgetBarChartInstance) {
+                budgetBarChartInstance.data.labels = projectsData.slice(0, 6).map(p => p.name.length > 14 ? p.name.substring(0, 12) + '...' : p.name);
+                budgetBarChartInstance.data.datasets[0].data = projectsData.slice(0, 6).map(p => (p.budget / 100000).toFixed(1));
+                budgetBarChartInstance.data.datasets[1].data = projectsData.slice(0, 6).map(p => (p.spent / 100000).toFixed(1));
+                budgetBarChartInstance.update();
+            }
+            if (taskDonutChartInstance) {
+                const completed = tasksData.filter(t => t.status === 'Completed').length;
+                const inProg = tasksData.filter(t => t.status === 'In-Progress').length;
+                const review = tasksData.filter(t => t.status === 'Review').length;
+                const open = tasksData.filter(t => t.status === 'Open').length;
+                taskDonutChartInstance.data.datasets[0].data = [completed, inProg, review, open];
+                taskDonutChartInstance.data.labels = [`Done (${completed})`, `In-Progress (${inProg})`, `Review (${review})`, `To-Do (${open})`];
+                taskDonutChartInstance.update();
+            }
+        }
+
+        // ================= APPLICATION INITIALIZATION =================
         window.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
             renderQuickDemoAccounts();
 
-            // Check persistent session
             const savedUser = localStorage.getItem('buildcorp_user');
             if (savedUser) {
                 try {
@@ -2580,81 +3978,9 @@
                 if (loginView) loginView.style.display = 'flex';
             }
 
-            renderTasks();
-            renderResources();
-            renderUsers();
-            renderProjects();
-            renderExpenses();
-            renderMaterials();
-            renderForms(sampleForms);
-            renderReports();
+            refreshAllViews();
+            initCharts();
             renderSidebarNav();
-
-            // Chart 1: Bar Chart (Budget vs Spent)
-            const ctxBar = document.getElementById('budgetBarChart').getContext('2d');
-            new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['Apex Tower', 'Metro Flyover', 'Greenfield Park', 'Harbor Term', 'Horizon Res', 'Solar Sub'],
-                    datasets: [
-                        {
-                            label: 'Approved Budget (₹ in Lakhs)',
-                            data: [350, 420, 280, 220, 195, 160],
-                            backgroundColor: '#6366f1',
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Total Spent (₹ in Lakhs)',
-                            data: [245, 312, 189, 146, 25, 128],
-                            backgroundColor: '#10b981',
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
-                        y: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: {
-                                color: '#94a3b8',
-                                callback: val => '₹' + val + 'L'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 12 } } },
-                        tooltip: {
-                            callbacks: {
-                                label: ctx => ctx.dataset.label + ': ₹' + ctx.raw + ' Lakhs'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Chart 2: Task Donut Chart
-            const ctxDonut = document.getElementById('taskDonutChart').getContext('2d');
-            new Chart(ctxDonut, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Done (28)', 'In-Progress (10)', 'Review (3)', 'To-Do (1)'],
-                    datasets: [{
-                        data: [28, 10, 3, 1],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#64748b'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans', size: 11 } } }
-                    }
-                }
-            });
         });
     </script>
 </body>
